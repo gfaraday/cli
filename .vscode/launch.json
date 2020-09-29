@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "faraday tag",
+      "name": "faraday_cli tag",
       "type": "dart",
       "request": "launch",
       "program": "bin/faraday.dart",
@@ -18,7 +18,7 @@
       ]
     },
     {
-      "name": "faraday completion",
+      "name": "faraday_cli completion",
       "type": "dart",
       "request": "launch",
       "program": "bin/faraday.dart",
@@ -33,7 +33,7 @@
       ]
     },
     {
-      "name": "faraday generate",
+      "name": "faraday_cli generate",
       "request": "launch",
       "program": "bin/faraday.dart",
       "args": [
@@ -48,7 +48,7 @@
       "type": "dart"
     },
     {
-      "name": "faraday init",
+      "name": "faraday_cli init",
       "request": "launch",
       "program": "bin/faraday.dart",
       "args": [
