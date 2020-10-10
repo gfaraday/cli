@@ -12,9 +12,11 @@
       "args": [
         "tag",
         "--project",
-        "/Users/gix/Documents/yxr/faraday_reborn",
+        "/Users/gix/Documents/yxr/gfraday/faraday_reborn",
         "-v",
-        "0.0.1+0"
+        "1.0.0+5",
+        "--platforms",
+        "ios",
       ]
     },
     {

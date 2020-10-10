@@ -6,11 +6,20 @@ import 'package:faraday/src/template/template.dart';
 import 'package:faraday/src/utils/exception.dart';
 import 'package:g_json/g_json.dart';
 import 'package:path/path.dart' as path;
-import 'package:yaml/yaml.dart';
-import 'package:shell/shell.dart';
 import 'package:recase/recase.dart';
+import 'package:shell/shell.dart';
+import 'package:yaml/yaml.dart';
 
 const pluginRegistrant = 'FlutterPluginRegistrant';
+
+class Pod {
+  final String name;
+  final String version;
+
+  Pod(this.name, this.version);
+}
+
+final dependencyPods = <Pod>[];
 
 class TagCommand extends FaradayCommand {
   TagCommand() : super() {
@@ -192,7 +201,7 @@ For Android Developer:
       log.fine('Start process Flutter.xcframework...');
       final flutterVersion = await processFlutterFramework();
       final dependencyFlutter =
-          "   s.dependency '$flutterPodName', '$flutterVersion'";
+          "   s.dependency '$flutterPodName', '$flutterVersion', :configurations => ['$mode']";
       log.config(dependencyFlutter);
 
       // Plugins & PluginRegistrant
@@ -201,7 +210,7 @@ For Android Developer:
 
       // App
       log.fine('Start process App.xcframework...');
-      final appName = await processAppFramework(registrantVersion);
+      await processAppFramework(registrantVersion);
 
       guide += '''
 For iOS Developer:
@@ -210,9 +219,11 @@ For iOS Developer:
 
     source '$_repoURL'
 
-  3. Make the host app depend on $appName pod
+  3. Merge blow code into your project's Podfile
 
-    pod '$appName', '~> $version', :configuration => ['$mode'], :inhibit_warnings => true
+${_generateCocoapodsInstallTips()}
+
+  4. Invoke install_flutter_pods
 
 ''';
     }
@@ -250,6 +261,7 @@ For iOS Developer:
 
     await _generateTempPodSpecFileAndPublish(newSource, podName);
 
+    dependencyPods.add(Pod(podName, localVersion));
     return localVersion;
   }
 
@@ -278,6 +290,7 @@ For iOS Developer:
         hasNewPlugin = true;
       }
 
+      dependencyPods.add(Pod(release ? plugin : '${plugin}Debug', lockVersion));
       dependencies[plugin] = lockVersion;
     }
 
@@ -288,7 +301,8 @@ For iOS Developer:
       // FlutterPluginRegistrant
       final buffer = StringBuffer();
       dependencies.forEach((k, v) {
-        buffer.writeln("s.dependency '$k${release ? '' : mode}', '$v'");
+        buffer.writeln(
+            "s.dependency '$k${release ? '' : mode}', '$v', :configurations => ['$mode']");
       });
       buffer.writeln(flutterDependency);
 
@@ -310,20 +324,23 @@ For iOS Developer:
         pluginRegistrant, podName, version, downloadSource,
         dependency: dependency);
     await _generateTempPodSpecFileAndPublish(specContent, podName);
+
+    dependencyPods.add(Pod(podName, version));
   }
 
   Future<String> processAppFramework([String registrantVersion]) async {
-    final podName = moduleName + (release ? '' : mode);
+    final podName = (moduleName + (release ? '' : mode)).pascalCase;
 
     await publish(
       'App',
       version,
-      podName: podName.pascalCase,
+      podName: podName,
       dependency:
-          "s.dependency '$moduleName$pluginRegistrant${release ? '' : mode}', '$registrantVersion'",
+          "s.dependency '$moduleName$pluginRegistrant${release ? '' : mode}', '$registrantVersion', :configurations => ['$mode']",
     );
 
-    return podName.pascalCase;
+    dependencyPods.add(Pod(podName, version));
+    return podName;
   }
 
   //
@@ -436,9 +453,27 @@ For iOS Developer:
     }
   }
 
+  String _generateCocoapodsInstallTips() {
+    final pods = dependencyPods
+        .map((p) =>
+            " pod '${p.name}', '~> ${p.version}', :configuration => ${release ? 'release_configurations' : 'debug_configurations'}")
+        .join('\n  ');
+
+    return '''def install_flutter_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
+  # debug section
+  ${release ? '# Accept local changes' : '$pods'}
+  # release section
+  ${release ? '$pods' : '# Accept local changes'}
+end
+  ''';
+  }
+
   String _generatePluginPodspecContent(
       String name, String podName, String version, String source,
       {String dependency}) {
+    if (dependency != null) {
+      log.warning('dependency will be ignored');
+    }
     return '''
 Pod::Spec.new do |s|
   s.authors      = "YuxiaorMobileTeam"
@@ -455,7 +490,6 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '8.0'
   s.vendored_frameworks = '$name.xcframework'
   s.frameworks = 'SystemConfiguration','Security'
-  ${dependency ?? ''}
   s.library = 'z','c++'
   s.license      = {
     :type => 'Copyright',
