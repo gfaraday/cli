@@ -20,6 +20,7 @@ class Pod {
 }
 
 final dependencyPods = <Pod>[];
+final _3rddependencyPods = <String>[];
 
 class TagCommand extends FaradayCommand {
   TagCommand() : super() {
@@ -270,10 +271,10 @@ ${_generateCocoapodsInstallTips()}
     final plugins = JSON
         .parse(File(path.join(project, '.flutter-plugins-dependencies'))
             .readAsStringSync())['plugins']['ios']
-        .listValue
-        .map((p) => p['name'].stringValue);
+        .listValue;
+    final pluginNames = plugins.map((p) => p['name'].stringValue);
 
-    log.config('plugins: ${plugins.join(',')}');
+    log.config('plugins: ${pluginNames.join(',')}');
 
     // 除了 App.framework 其他的均不需要 每次都上传， 只需要判断版本不一致再上传
     YamlMap lock =
@@ -284,14 +285,31 @@ ${_generateCocoapodsInstallTips()}
 
     var hasNewPlugin = false;
     for (final plugin in plugins) {
+      final pluginName = plugin['name'].stringValue;
       // 获取当前 pubspec version
-      final lockVersion = packages[plugin]['version'];
-      if (await publish(plugin, lockVersion)) {
+      final lockVersion = packages[pluginName]['version'];
+      if (await publish(pluginName, lockVersion)) {
         hasNewPlugin = true;
       }
+      // add plugins dependency
+      final podspec =
+          path.join(plugin['path'].stringValue, 'ios', '$pluginName.podspec');
+      final file = File(podspec);
+      if (file.existsSync()) {
+        final dependencies = file.readAsLinesSync().where((l) =>
+            l.startsWith(RegExp(r'^\s+s.dependency ')) &&
+            !l.contains('Flutter'));
+        if (dependencies.isNotEmpty) {
+          for (final dependency in dependencies) {
+            _3rddependencyPods
+                .add(dependency.trim().replaceAll('s.dependency', 'pod'));
+          }
+        }
+      }
 
-      dependencyPods.add(Pod(release ? plugin : '${plugin}Debug', lockVersion));
-      dependencies[plugin] = lockVersion;
+      dependencyPods
+          .add(Pod(release ? pluginName : '${pluginName}Debug', lockVersion));
+      dependencies[pluginName] = lockVersion;
     }
 
     final pv = await findPodLatestVersionInRepo(
@@ -460,6 +478,7 @@ ${_generateCocoapodsInstallTips()}
         .join('\n  ');
 
     return '''def install_flutter_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
+  ${_3rddependencyPods.join('\n  ')}
   # debug section
   ${release ? '# Accept local changes' : '$pods'}
   # release section
@@ -472,7 +491,7 @@ end
       String name, String podName, String version, String source,
       {String dependency}) {
     if (dependency != null) {
-      log.warning('dependency will be ignored');
+      log.finest('dependency will be ignored');
     }
     return '''
 Pod::Spec.new do |s|
