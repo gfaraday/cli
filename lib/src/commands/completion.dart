@@ -39,7 +39,7 @@ class CompletionCommand extends FaradayCommand {
       final common = info['common'];
       if (common != null && common.isNotEmpty) {
         result.addAll(common.map((m) =>
-            "FaradayCommon.invokeMethod('$token#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}}).then((r) => JSON(r))"));
+            "FaradayCommon.invokeMethod('$token#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}})"));
       }
       final route = info['route'];
       if (route != null && route.isNotEmpty) {

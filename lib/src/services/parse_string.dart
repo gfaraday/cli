@@ -27,22 +27,15 @@ Map<String, Map<String, List<MethodDeclaration>>> parse(
             if (commonAnnotation.contains(metadata.name.name) ||
                 routeAnnotation.contains(metadata.name.name)) {
               if (method.isStatic) {
-                final rt = method.returnType.toString();
-                final methodName = method.name.name;
-                // 对应的 swift 和 kotlin 返回值为 Any?
-                if ('null' == rt ||
-                    'Future<JSON>' == rt ||
-                    'Future<dynamic>' == rt) {
-                  if (offset == null ||
-                      (offset > method.offset && method.end > offset)) {
-                    if (commonAnnotation.contains(metadata.name.name)) {
-                      commonMethods.add(method);
-                    } else {
-                      routeMethods.add(method);
-                    }
+                // final rt = method.returnType.toString();
+                // final methodName = method.name.name;
+                if (offset == null ||
+                    (offset > method.offset && method.end > offset)) {
+                  if (commonAnnotation.contains(metadata.name.name)) {
+                    commonMethods.add(method);
+                  } else {
+                    routeMethods.add(method);
                   }
-                } else {
-                  throw '${metadata.name.name} 返回值必须为 Future<dynmaic> 或者 Future<JSON>. [${clazzName}:${methodName} -> ${rt}] 不合法';
                 }
               } else {
                 throw '被@common或者@entry装饰的必须为静态方法. [${clazzName}:${method.name}]不合法';
