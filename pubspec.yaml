@@ -1,6 +1,6 @@
 name: faraday
 description: g_faraday command-line application.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/gfaraday/cli
 
 executables:

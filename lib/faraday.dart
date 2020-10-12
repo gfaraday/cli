@@ -11,15 +11,19 @@ const routeAnnotation = ['entry'];
 final log = Logger('faraday');
 
 void main(List<String> arguments) {
-  // final verbose = arguments.contains('-v') || arguments.contains('--verbose');
+  final verbose = arguments.contains('--verbose');
 
   // append logger
   Logger.root.onRecord.listen(recordAnsiLog);
-  Logger.root.level = Level.ALL; //verbose ? Level.ALL : Level.INFO;
+  Logger.root.level = verbose ? Level.ALL : Level.WARNING;
 
   if (arguments.length == 1 && arguments.first == '--version') {
     print('1.0.0');
     return;
   }
-  FaradayCommandRunner().run(arguments).then((v) => print(v));
+  FaradayCommandRunner().run(arguments).then((v) {
+    if (v != null && v is String && v.isNotEmpty) {
+      print(v);
+    }
+  });
 }

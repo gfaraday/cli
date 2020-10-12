@@ -1,4 +1,10 @@
-# 1.0.2
+# 1.0.3
+
+- Support Log_LEVEL
+
+- Print Command Result
+
+## 1.0.2
 
 - Refine tag command.
 
