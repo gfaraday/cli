@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:g_json/g_json.dart';
+import 'package:path/path.dart' as path;
+
 import '../commands/command.dart';
 import '../services/processor.dart';
 import '../utils/exception.dart';
-import 'package:path/path.dart' as path;
 
 class GenerateCommand extends FaradayCommand {
   GenerateCommand() : super() {
@@ -25,18 +27,6 @@ class GenerateCommand extends FaradayCommand {
     String projectRoot;
     final filePath = stringArg('file');
 
-    final ios_common = stringArg('ios-common');
-    final ios_route = stringArg('ios-route');
-    final android_common = stringArg('android-common');
-    final android_route = stringArg('android-route');
-
-    final outputs = <String, String>{
-      if (ios_common != null) 'ios-common': ios_common,
-      if (ios_route != null) 'ios-route': ios_route,
-      if (android_common != null) 'android-common': android_common,
-      if (android_route != null) 'android-route': android_route,
-    };
-
     if (filePath != null && filePath.contains('lib/')) {
       projectRoot = filePath.split('lib/').first;
 
@@ -45,7 +35,8 @@ class GenerateCommand extends FaradayCommand {
       final sourceCode = File(filePath).readAsStringSync() ?? '';
       log.info('source code length: ${sourceCode.length}');
 
-      process(sourceCode, projectRoot, filePath.split('lib/').last, outputs);
+      process(sourceCode, projectRoot, filePath.split('lib/').last,
+          outputs(projectRoot));
 
       return 'generated common(s)&route(s) for $filePath';
     }
@@ -71,10 +62,29 @@ class GenerateCommand extends FaradayCommand {
             .listSync(followLinks: false, recursive: true)) {
       if (item is File && item.path.endsWith('.dart')) {
         process(item.readAsStringSync(), projectRoot,
-            item.path.split('lib/').last, outputs);
+            item.path.split('lib/').last, outputs(projectRoot));
       }
     }
 
     return 'generated common(s)&route(s) for $projectRoot';
+  }
+
+  Map<String, String> outputs(String root) {
+    final configPath = path.join(root, '.faraday.json');
+    final config = JSON.parse(File(configPath).readAsStringSync());
+
+    final ios_common = stringArg('ios-common') ?? config['ios-common'].string;
+    final ios_route = stringArg('ios-route') ?? config['ios-route'].string;
+    final android_common =
+        stringArg('android-common') ?? config['android-common'].string;
+    final android_route =
+        stringArg('android-route') ?? config['android-route'].string;
+
+    return <String, String>{
+      if (ios_common != null) 'ios-common': ios_common,
+      if (ios_route != null) 'ios-route': ios_route,
+      if (android_common != null) 'android-common': android_common,
+      if (android_route != null) 'android-route': android_route,
+    };
   }
 }
