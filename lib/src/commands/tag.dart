@@ -435,10 +435,18 @@ ${_generateCocoapodsInstallTips()}
     return path.join(dio.options.baseUrl, filename);
   }
 
+  var retryTimes = 0;
   void upload(String file, {String filename}) async {
     final formData = FormData.fromMap(
         {'file': await MultipartFile.fromFile(file, filename: filename)});
-    await dio.post('/', data: formData);
+    try {
+      await dio.post('/', data: formData);
+    } catch (_) {
+      if (retryTimes <= 3) {
+        retryTimes++;
+        upload(file, filename: filename);
+      }
+    }
   }
 
   void _generateTempPodSpecFileAndPublish(
