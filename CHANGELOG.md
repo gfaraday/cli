@@ -1,4 +1,8 @@
-# 1.0.3
+# 1.0.4
+
+- fix bug
+
+## 1.0.3
 
 - Support Log_LEVEL
 
@@ -6,11 +10,11 @@
 
 ## 1.0.2
 
-- Refine tag command.
+- Refine tag command
 
 ## 1.0.1
 
-- Refine tag command.
+- Refine tag command
 
 ## 1.0.0
 

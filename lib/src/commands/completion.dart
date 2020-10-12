@@ -37,12 +37,12 @@ class CompletionCommand extends FaradayCommand {
     r.forEach((clazz, info) {
       final token = '$fileIdentifier|$clazz';
       final common = info['common'];
-      if (common.isNotEmpty) {
+      if (common != null && common.isNotEmpty) {
         result.addAll(common.map((m) =>
             "FaradayCommon.invokeMethod('$token#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}}).then((r) => JSON(r))"));
       }
       final route = info['route'];
-      if (route.isNotEmpty) {
+      if (route != null && route.isNotEmpty) {
         result.addAll(route.map((m) {
           final arguments = m.arguments.isNotEmpty
               ? ", arguments: {${m.arguments.map((p) => p.dartStyle).join(', ')}}"
