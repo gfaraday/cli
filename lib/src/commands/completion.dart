@@ -6,7 +6,7 @@ class CompletionCommand extends FaradayCommand {
   CompletionCommand() : super() {
     argParser.addOption('offset', help: 'valid zero-based offset');
     argParser.addOption('relative-path', help: '源文件相对于 `lib`目录的相对路径');
-    // argParser.addOption('file', help: '仅供测试');
+    argParser.addOption('source-code', help: '源代码');
   }
 
   @override
@@ -27,8 +27,8 @@ class CompletionCommand extends FaradayCommand {
     final fileIdentifier = stringArg('relative-path');
     if (fileIdentifier == null || fileIdentifier.isEmpty) return '';
 
-    if (argResults.rest.isEmpty) return '';
-    final sourceCode = argResults.rest.last;
+    final sourceCode = stringArg('source-code');
+    if (sourceCode.isEmpty) return '';
 
     final r = parse(sourceCode: sourceCode, offset: offset);
 
