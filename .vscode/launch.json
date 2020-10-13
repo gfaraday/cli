@@ -27,11 +27,9 @@
       "args": [
         "completion",
         "--offset",
-        "1400",
-        "--relative-path",
-        "cli_demo/demo.dart",
+        "160",
         "--file",
-        "../../example/lib/src/cli_demo/demo.dart"
+        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart"
       ]
     },
     {

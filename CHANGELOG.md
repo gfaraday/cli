@@ -1,9 +1,16 @@
-# 1.0.7
+# 1.0.9
+
+- refine completion command
+
+## 1.0.8
+
+- refine completion command
+
+## 1.0.7
 
 - ignore podName for tag aar flow
 
 - refine android install tips
-
 
 ## 1.0.6
 
