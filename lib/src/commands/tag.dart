@@ -110,13 +110,17 @@ class TagCommand extends FaradayCommand {
 
     _repoName = stringArg('repo-name') ?? fMap['pod_repo_name'];
 
-    final repoList =
-        (await shell.startAndReadAsString('pod', ['repo'])).split('\n');
-    final index = repoList.indexWhere((r) => r.startsWith(repoName));
-    if (index == -1 && _platforms.contains('ios')) {
-      throwToolExit('cocoapods repo-list $repoList not contain $repoName');
+    String _repoURL;
+
+    if (platforms.contains('ios')) {
+      final repoList =
+          (await shell.startAndReadAsString('pod', ['repo'])).split('\n');
+      final index = repoList.indexWhere((r) => r.startsWith(repoName));
+      if (index == -1 && _platforms.contains('ios')) {
+        throwToolExit('cocoapods repo-list $repoList not contain $repoName');
+      }
+      _repoURL = repoList[index + 2].split(' ').last;
     }
-    final _repoURL = repoList[index + 2].split(' ').last;
 
     // update debug message.
     final versionNumber = version.split('+').last;
@@ -178,7 +182,7 @@ For Android Developer:
   3. Make the host app depend on the Flutter module:
 
     dependencies {
-      ${mode.toLowerCase()}Implementation '$androidPackage:flutter_${mode.toLowerCase()}:1.0'
+      ${mode.toLowerCase()}Implementation '$androidPackage:flutter_${mode.toLowerCase()}:$version'
     }
 
 ''';
