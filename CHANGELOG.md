@@ -1,4 +1,11 @@
-# 1.0.6
+# 1.0.7
+
+- ignore podName for tag aar flow
+
+- refine android install tips
+
+
+## 1.0.6
 
 - fix bug
 

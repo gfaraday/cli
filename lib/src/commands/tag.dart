@@ -448,6 +448,7 @@ ${_generateCocoapodsInstallTips()}
     } catch (_) {
       if (retryTimes <= 3) {
         retryTimes++;
+        log.warning('update failed retry $retryTimes ...');
         upload(file, filename: filename);
       }
     }
