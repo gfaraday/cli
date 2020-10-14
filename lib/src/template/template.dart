@@ -38,7 +38,7 @@ import com.yuxiaor.flutter.g_faraday.FaradayActivity
 
 $_header
 
-sealed class FlutterRoute(val routeName: String, val routeArguments: HashMap<String, Any>?) {
+sealed class FlutterRoute(val routeName: String, val routeArguments: HashMap<String, Any>? = null) {
 // ---> sealed
 }
 

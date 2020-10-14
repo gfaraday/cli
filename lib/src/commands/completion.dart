@@ -27,7 +27,7 @@ class CompletionCommand extends FaradayCommand {
     final offset = num.parse(offsetS, (_) => -1).toInt();
     if (offset <= 0) return '';
 
-    final sourceCode = stringArg('source-code');
+    final sourceCode = stringArg('source-code').replaceAll('\r\n', '\n');
     if (sourceCode.isEmpty) return '';
 
     Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
@@ -46,7 +46,7 @@ class CompletionCommand extends FaradayCommand {
         }
       }
       throw ToolExit(
-          'invlid source code with offset. $sourceCode \noffset:$offset');
+          'Invlid source code with offset. $sourceCode \noffset:$offset');
     }
 
     final r = parseCode();

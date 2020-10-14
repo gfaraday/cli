@@ -27,9 +27,9 @@
       "args": [
         "completion",
         "--offset",
-        "268",
-        "--file",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart",
+        "196",
+        "--source-code",
+        "import 'package:g_faraday/g_faraday.dart';\r\nimport 'package:g_json/g_json.dart';\r\n\r\nclass Data extends Feature {\r\n  @override\r\n  String get name => 'data';\r\n\r\n  @common\r\n  static Future<JSON> get() {\r\n    F\r\n  }\r\n}\r\n",
         "--verbose"
       ]
     },

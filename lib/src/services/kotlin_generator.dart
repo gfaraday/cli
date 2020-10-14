@@ -30,8 +30,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         if (properties.isEmpty) {
           result.add(comments +
-              '    object ${name.pascalCase}: FlutterRoute("${name.snakeCase}", null)'
-                  .replaceDartTypeToKotlin);
+              '    object ${name.pascalCase}: FlutterRoute("${name.snakeCase}")');
         } else {
           result.add(comments +
               '    data class ${name.pascalCase}($properties): FlutterRoute("${name.snakeCase}", $parameters)'
