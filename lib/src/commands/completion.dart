@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:faraday/src/commands/command.dart';
@@ -10,7 +9,7 @@ import 'package:recase/recase.dart';
 class CompletionCommand extends FaradayCommand {
   CompletionCommand() : super() {
     argParser.addOption('offset', help: 'valid zero-based offset');
-    argParser.addOption('file', help: '源代码文件');
+    argParser.addOption('source-code', abbr: 's', help: 'dart source code');
   }
 
   @override
@@ -28,7 +27,7 @@ class CompletionCommand extends FaradayCommand {
     final offset = num.parse(offsetS, (_) => -1).toInt();
     if (offset <= 0) return '';
 
-    final sourceCode = File(stringArg('file')).readAsStringSync();
+    final sourceCode = stringArg('source-code');
     if (sourceCode.isEmpty) return '';
 
     Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
