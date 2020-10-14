@@ -1,4 +1,8 @@
-# 1.0.13
+# 1.1.0
+
+- refine completion command
+
+## 1.0.13
 
 - refine completion command
 
