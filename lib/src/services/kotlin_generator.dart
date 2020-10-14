@@ -12,11 +12,14 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
 
     switch (type) {
       case KotlinCodeType.interface:
+        var comments =
+            (method['comments'].string?.replaceAll('\n', '\n    ') ?? '');
         final parameters = args
             .map((dynamic j) =>
                 '${j.name}: ${j['type'].stringValue}${j.isRequired ? '' : '?'}')
             .join(', ');
-        result.add('    fun $name($parameters): Any?'.replaceDartTypeToKotlin);
+        result.add(comments +
+            '    fun $name($parameters): Any?'.replaceDartTypeToKotlin);
         break;
       case KotlinCodeType.sealed:
         final map =
