@@ -70,7 +70,7 @@ class CompletionCommand extends FaradayCommand {
           final arguments = m.arguments.isNotEmpty
               ? ", arguments: {${m.arguments.map((p) => p.dartStyle).join(', ')}}"
               : null;
-          return "Navigator.of(context).pushNamedFromNative('${m.name.name.snakeCase}'${arguments ?? ''})";
+          return "Navigator.of(context).pushNamed('${m.name.name.snakeCase}'${arguments ?? ''})";
         }));
       }
     });
