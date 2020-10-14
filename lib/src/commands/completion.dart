@@ -28,9 +28,12 @@ class CompletionCommand extends FaradayCommand {
     final fileIdentifier = stringArg('file').split('lib/').last;
     if (fileIdentifier == null || fileIdentifier.isEmpty) return '';
 
-    final sourceCode = File(stringArg('file')).readAsStringSync();
+    var sourceCode = File(stringArg('file')).readAsStringSync();
     if (sourceCode.isEmpty) return '';
-
+    final char = sourceCode[offset - 1].toUpperCase();
+    if (char == 'F' || char == 'N') {
+      sourceCode = sourceCode.replaceRange(offset - 1, offset, '');
+    }
     final r = parse(sourceCode: sourceCode, offset: offset);
 
     final result = <String>[];
