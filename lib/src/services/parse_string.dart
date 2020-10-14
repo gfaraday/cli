@@ -48,7 +48,11 @@ Map<String, Map<String, List<MethodDeclaration>>> parse(
       }
 
       // print(
-      //     '🔥 process feature: $clazzName\n common(s):\n  ${commonMethods.join(',\n  ')}\nroute(s):\n  ${routeMethods.join(',\n  ')}');
+      // '🔥 process feature: $clazzName\n common(s):\n  ${commonMethods.join(',\n  ')}\nroute(s):\n  ${routeMethods.join(',\n  ')}');
+      final duplicateClass = result[clazzName];
+      if (duplicateClass != null && duplicateClass.isNotEmpty) {
+        throw '全局的Feature 不能重名。 duplicate_class: $clazzName';
+      }
       result[clazzName] = {'common': commonMethods, 'route': routeMethods};
     }
   }

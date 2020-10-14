@@ -2,64 +2,63 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:faraday/src/services/kotlin_generator.dart';
-
-import '../utils/exception.dart';
 import 'package:g_json/g_json.dart';
 
-import 'swift_generator.dart';
+import '../utils/exception.dart';
 import 'parse_string.dart';
+import 'swift_generator.dart';
 
 void process(String sourceCode, String projectRoot, String identifier,
     Map<String, String> outputs) {
-  void _flushSwift(String token, String clazz,
+  void _flushSwift(String clazz,
       {List<JSON> commonMethods, List<JSON> routeMethods}) {
     final swiftCommonFile = outputs['ios-common'];
     if (swiftCommonFile != null && commonMethods != null) {
       // protocol
       final protocols = generateSwift(
           commonMethods ?? [], SwiftCodeType.protocol,
-          identifier: token);
-      flush(protocols, 'protocol', token, swiftCommonFile);
+          identifier: clazz);
+      flush(protocols, 'protocol', clazz, swiftCommonFile);
 
       // impl
       final impls = generateSwift(commonMethods ?? [], SwiftCodeType.impl,
-          identifier: token);
-      flush(impls, 'impl', token, swiftCommonFile, indentation: '        ');
+          identifier: clazz);
+      flush(impls, 'impl', clazz, swiftCommonFile, indentation: '        ');
     }
 
     final swiftRouteFile = outputs['ios-route'];
     if (swiftRouteFile != null) {
       // enum
       final enums = generateSwift(routeMethods ?? [], SwiftCodeType.enmu);
-      flush(enums, 'enum', token, swiftRouteFile);
+      flush(enums, 'enum', clazz, swiftRouteFile);
 
       final enumPages =
           generateSwift(routeMethods ?? [], SwiftCodeType.enumPage);
-      flush(enumPages, 'enum_page', token, swiftRouteFile,
+      flush(enumPages, 'enum_page', clazz, swiftRouteFile,
           indentation: '            ');
     }
   }
 
-  void _flushKotlin(String token, String clazz,
+  void _flushKotlin(String clazz,
       {List<JSON> commonMethods, List<JSON> routeMethods}) {
     final kotlinCommonFile = outputs['android-common'];
     if (kotlinCommonFile != null) {
       final interface = generateKotlin(
           commonMethods ?? [], KotlinCodeType.interface,
-          identifier: token);
-      flush(interface, 'interface', token, kotlinCommonFile);
+          identifier: clazz);
+      flush(interface, 'interface', clazz, kotlinCommonFile);
 
       final impls = generateKotlin(commonMethods ?? [], KotlinCodeType.impl,
-          identifier: token);
-      flush(impls, 'impl', token, kotlinCommonFile);
+          identifier: clazz);
+      flush(impls, 'impl', clazz, kotlinCommonFile);
     }
 
     final kotlinRouteFile = outputs['android-route'];
     if (kotlinRouteFile != null) {
       // sealed class
       final sealeds = generateKotlin(routeMethods ?? [], KotlinCodeType.sealed,
-          identifier: token);
-      flush(sealeds, 'sealed', token, kotlinRouteFile, indentation: '');
+          identifier: clazz);
+      flush(sealeds, 'sealed', clazz, kotlinRouteFile, indentation: '');
     }
   }
 
@@ -70,12 +69,10 @@ void process(String sourceCode, String projectRoot, String identifier,
     final commons = info['common']?.map((m) => JSON(m.info))?.toList() ?? [];
     final routes = info['route']?.map((m) => JSON(m.info))?.toList() ?? [];
     if (commons.isNotEmpty || routes.isNotEmpty) {
-      // 注意 AutoImplCommand 用到了这个token值
-      final token = '$identifier|$clazz';
-      _flushSwift(token, clazz, commonMethods: commons, routeMethods: routes);
-      _flushKotlin(token, clazz, commonMethods: commons, routeMethods: routes);
+      _flushSwift(clazz, commonMethods: commons, routeMethods: routes);
+      _flushKotlin(clazz, commonMethods: commons, routeMethods: routes);
       print(
-          'flush $token [${commons.length}]common(s) & [${routes.length}]route(s)');
+          'flush $clazz [${commons.length}]common(s) & [${routes.length}]route(s)');
     }
   });
 }

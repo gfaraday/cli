@@ -25,9 +25,6 @@ class CompletionCommand extends FaradayCommand {
     final offset = num.parse(offsetS, (_) => -1).toInt();
     if (offset <= 0) return '';
 
-    final fileIdentifier = stringArg('file').split('lib/').last;
-    if (fileIdentifier == null || fileIdentifier.isEmpty) return '';
-
     var sourceCode = File(stringArg('file')).readAsStringSync();
     if (sourceCode.isEmpty) return '';
     final char = sourceCode[offset - 1].toUpperCase();
@@ -39,11 +36,10 @@ class CompletionCommand extends FaradayCommand {
     final result = <String>[];
 
     r.forEach((clazz, info) {
-      final token = '$fileIdentifier|$clazz';
       final common = info['common'];
       if (common != null && common.isNotEmpty) {
         result.addAll(common.map((m) =>
-            "FaradayCommon.invokeMethod('$token#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}})"));
+            "FaradayCommon.invokeMethod('$clazz#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}})"));
       }
       final route = info['route'];
       if (route != null && route.isNotEmpty) {
