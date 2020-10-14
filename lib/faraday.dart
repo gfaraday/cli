@@ -18,7 +18,7 @@ void main(List<String> arguments) {
   Logger.root.level = verbose ? Level.ALL : Level.WARNING;
 
   if (arguments.length == 1 && arguments.first == '--version') {
-    print('1.0.10');
+    print('1.0.11');
     return;
   }
   FaradayCommandRunner().run(arguments).then((v) {
