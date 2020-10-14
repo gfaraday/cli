@@ -4,9 +4,9 @@ import 'package:g_json/g_json.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 
-import '../utils/exception.dart';
 import '../commands/command.dart';
 import '../template/template.dart' as t;
+import '../utils/exception.dart';
 
 class InitCommand extends FaradayCommand {
   InitCommand() : super() {
@@ -81,7 +81,7 @@ class InitCommand extends FaradayCommand {
             throwToolExit('Kotlin file must starts with `package `');
           }
           final package = ktfile.first;
-          c = package + '\n\n' + c;
+          c = '@file:Suppress("UNCHECKED_CAST")\n\n' + package + '\n\n' + c;
         }
         File(fp).writeAsStringSync(c, mode: FileMode.write);
       });
