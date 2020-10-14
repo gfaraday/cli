@@ -15,6 +15,7 @@ import io.flutter.plugin.common.MethodChannel
 
 $_header
 
+@file:Suppress("UNCHECKED_CAST")
 interface Common: MethodChannel.MethodCallHandler {
     // ---> interface
 
