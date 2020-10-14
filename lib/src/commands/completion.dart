@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:faraday/src/commands/command.dart';
 import 'package:faraday/src/services/parse_string.dart';
+import 'package:faraday/src/utils/exception.dart';
 import 'package:recase/recase.dart';
 
 class CompletionCommand extends FaradayCommand {
@@ -26,27 +28,26 @@ class CompletionCommand extends FaradayCommand {
     final offset = num.parse(offsetS, (_) => -1).toInt();
     if (offset <= 0) return '';
 
-    var sourceCode = File(stringArg('file')).readAsStringSync();
+    final sourceCode = File(stringArg('file')).readAsStringSync();
     if (sourceCode.isEmpty) return '';
 
     Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
-      final char = sourceCode[offset - 1].toUpperCase();
-      if (char == 'F' || char == 'N') {
-        final withReturnOffset = offset - 8;
-        if (withReturnOffset >= 0) {
-          final substring = sourceCode.substring(withReturnOffset, offset);
-          if (substring.startsWith('return ')) {
-            return parse(
-                sourceCode:
-                    sourceCode.replaceRange(withReturnOffset, offset, ''),
-                offset: withReturnOffset);
-          }
+      final lineSplitter = LineSplitter();
+      final lines = lineSplitter.convert(sourceCode);
+
+      for (var i = 0; i < lines.length; i++) {
+        final length =
+            lines.sublist(0, i + 1).fold<int>(0, (r, l) => r + l.length) + i;
+        if (length >= offset) {
+          final line = lines.removeAt(i);
+          log.info('remove line => ${i + 1}: "$line"');
+          final lineOffset = line.length - (length - offset);
+          return parse(
+              sourceCode: lines.join('\n'), offset: offset - lineOffset);
         }
-        return parse(
-            sourceCode: sourceCode.replaceRange(offset - 1, offset, ''),
-            offset: offset - 1);
       }
-      return parse(sourceCode: sourceCode, offset: offset);
+      throw ToolExit(
+          'invlid source code with offset. $sourceCode \noffset:$offset');
     }
 
     final r = parseCode();

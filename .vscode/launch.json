@@ -27,9 +27,10 @@
       "args": [
         "completion",
         "--offset",
-        "225",
+        "268",
         "--file",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart"
+        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart",
+        "--verbose"
       ]
     },
     {
