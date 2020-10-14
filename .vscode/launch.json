@@ -27,7 +27,7 @@
       "args": [
         "completion",
         "--offset",
-        "219",
+        "225",
         "--file",
         "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart"
       ]

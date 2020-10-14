@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:faraday/src/commands/command.dart';
 import 'package:faraday/src/services/parse_string.dart';
 import 'package:recase/recase.dart';
@@ -27,11 +28,28 @@ class CompletionCommand extends FaradayCommand {
 
     var sourceCode = File(stringArg('file')).readAsStringSync();
     if (sourceCode.isEmpty) return '';
-    final char = sourceCode[offset - 1].toUpperCase();
-    if (char == 'F' || char == 'N') {
-      sourceCode = sourceCode.replaceRange(offset - 1, offset, '');
+
+    Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
+      final char = sourceCode[offset - 1].toUpperCase();
+      if (char == 'F' || char == 'N') {
+        final withReturnOffset = offset - 8;
+        if (withReturnOffset >= 0) {
+          final substring = sourceCode.substring(withReturnOffset, offset);
+          if (substring.startsWith('return ')) {
+            return parse(
+                sourceCode:
+                    sourceCode.replaceRange(withReturnOffset, offset, ''),
+                offset: withReturnOffset);
+          }
+        }
+        return parse(
+            sourceCode: sourceCode.replaceRange(offset - 1, offset, ''),
+            offset: offset - 1);
+      }
+      return parse(sourceCode: sourceCode, offset: offset);
     }
-    final r = parse(sourceCode: sourceCode, offset: offset);
+
+    final r = parseCode();
 
     final result = <String>[];
 
