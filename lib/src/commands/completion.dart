@@ -29,7 +29,7 @@ class CompletionCommand extends FaradayCommand {
     if (offset <= 0) return '';
 
     final sourceCode =
-        String.fromCharCodes(base64Decode(stringArg('source-code')));
+        Utf8Decoder().convert(base64Decode(stringArg('source-code')));
     if (sourceCode.isEmpty) return '';
 
     Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
