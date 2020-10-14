@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:faraday/src/commands/command.dart';
@@ -27,22 +28,23 @@ class CompletionCommand extends FaradayCommand {
     final offset = num.parse(offsetS, (_) => -1).toInt();
     if (offset <= 0) return '';
 
-    final sourceCode = stringArg('source-code').replaceAll('\r\n', '\n');
+    final sourceCode = String.fromCharCodes(base64Decode(stringArg('source-code')));
     if (sourceCode.isEmpty) return '';
 
     Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
       final lineSplitter = LineSplitter();
       final lines = lineSplitter.convert(sourceCode);
-
+      
       for (var i = 0; i < lines.length; i++) {
+        // windows: \r\n other: \n
         final length =
-            lines.sublist(0, i + 1).fold<int>(0, (r, l) => r + l.length) + i;
+            lines.sublist(0, i + 1).fold<int>(0, (r, l) => r + l.length) + i * (Platform.isWindows ? 2 : 1);
         if (length >= offset) {
           final line = lines.removeAt(i);
           log.info('remove line => ${i + 1}: "$line"');
           final lineOffset = line.length - (length - offset);
           return parse(
-              sourceCode: lines.join('\n'), offset: offset - lineOffset);
+              sourceCode: lines.join('\n'), offset: offset - lineOffset - (Platform.isWindows ? i : 0));
         }
       }
       throw ToolExit(

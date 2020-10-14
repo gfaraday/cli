@@ -27,10 +27,11 @@
       "args": [
         "completion",
         "--offset",
-        "196",
+        "191",
         "--source-code",
-        "import 'package:g_faraday/g_faraday.dart';\r\nimport 'package:g_json/g_json.dart';\r\n\r\nclass Data extends Feature {\r\n  @override\r\n  String get name => 'data';\r\n\r\n  @common\r\n  static Future<JSON> get() {\r\n    F\r\n  }\r\n}\r\n",
+        "aW1wb3J0ICdwYWNrYWdlOmdfZmFyYWRheS9nX2ZhcmFkYXkuZGFydCc7DQoNCmNsYXNzIFVJIGV4dGVuZHMgRmVhdHVyZSB7DQogIEBvdmVycmlkZQ0KICBTdHJpbmcgZ2V0IG5hbWUgPT4gJ3VpJzsNCg0KICAvLy90b2FzdA0KICBAY29tbW9uDQogIHN0YXRpYyBGdXR1cmU8ZHluYW1pYz4gdG9hc3QoU3RyaW5nIG1zZykgew0KICAgIEYNCiAgfQ0KDQogIC8vIEBjb21tb24NCiAgLy8gc3RhdGljIEZ1dHVyZTxKU09OPiBzaG93TG9hZGluZygpIHsNCiAgLy8gICByZXR1cm4gRmFyYWRheUNvbW1vbi5pbnZva2VNZXRob2QoJ1VJI3Nob3dMb2FkaW5nJywge30pDQogIC8vICAgICAgIC50aGVuKChyKSA9PiBKU09OKHIpKTsNCiAgLy8gfQ0KDQogIC8vIEBjb21tb24NCiAgLy8gc3RhdGljIEZ1dHVyZTxKU09OPiBoaWRlTG9hZGluZygpIHsNCiAgLy8gICByZXR1cm4gRmFyYWRheUNvbW1vbi5pbnZva2VNZXRob2QoJ1VJI2hpZGVMb2FkaW5nJywge30pDQogIC8vICAgICAgIC50aGVuKChyKSA9PiBKU09OKHIpKTsNCiAgLy8gfQ0KfQ0K",
         "--verbose"
+
       ]
     },
     {
