@@ -1,4 +1,8 @@
-# 1.1.1
+# 1.1.2
+
+- 性能优化
+
+## 1.1.1
 
 - refine completion command
 
