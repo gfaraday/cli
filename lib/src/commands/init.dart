@@ -55,21 +55,21 @@ class InitCommand extends FaradayCommand {
 
     final ios_common = stringArg('ios-common') ?? config['ios-common'].string;
     final ios_route = stringArg('ios-route') ?? config['ios-route'].string;
-    final ios_net = stringArg('ios-net') ?? config['ios-net'].string;
+    // final ios_net = stringArg('ios-net') ?? config['ios-net'].string;
     final android_common =
         stringArg('android-common') ?? config['android-common'].string;
     final android_route =
         stringArg('android-route') ?? config['android-route'].string;
-    final android_net =
-        stringArg('android-net') ?? config['android-net'].string;
+    // final android_net =
+    //     stringArg('android-net') ?? config['android-net'].string;
 
     final outputs = <String, String>{
       if (ios_common != null) ios_common: t.s_common,
       if (ios_route != null) ios_route: t.s_route,
-      if (ios_net != null) ios_net: t.s_net,
+      // if (ios_net != null) ios_net: t.s_net,
       if (android_common != null) android_common: t.k_common,
       if (android_route != null) android_route: t.k_route,
-      if (android_net != null) android_net: t.k_net,
+      // if (android_net != null) android_net: t.k_net,
     };
 
     if (outputs.isNotEmpty) {
