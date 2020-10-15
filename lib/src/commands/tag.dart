@@ -456,10 +456,12 @@ ${_generateCocoapodsInstallTips()}
     try {
       await dio.post('/', data: formData);
     } catch (_) {
-      if (retryTimes <= 3) {
+      if (retryTimes <= 5) {
         retryTimes++;
         log.warning('update failed retry $retryTimes ...');
         upload(file, filename: filename);
+      } else {
+        throwToolExit('upload failed: file: $file');
       }
     }
   }
