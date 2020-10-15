@@ -14,12 +14,32 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
       case KotlinCodeType.interface:
         var comments =
             (method['comments'].string?.replaceAll('\n', '\n    ') ?? '');
+        if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
             .map((dynamic j) =>
                 '${j.name}: ${j['type'].stringValue}${j.isRequired ? '' : '?'}')
             .join(', ');
+        final r = method['return'].stringValue;
+
+        String returnType;
+
+        if (r == 'null' || r == 'dynamic') {
+          returnType = ': Any?';
+        } else if (r == 'void') {
+          returnType = '';
+        } else if (r.startsWith('Future<') && r.endsWith('>')) {
+          final realType = r.substring(7, r.length - 1);
+          if (realType.startsWith('Map')) {
+            returnType = ': Map<String, *>';
+          } else if (realType.startsWith('List')) {
+            returnType = ': List<*>';
+          } else {
+            returnType = ': $realType';
+          }
+        }
+
         result.add(comments +
-            '    fun $name($parameters): Any?'.replaceDartTypeToKotlin);
+            '    fun $name($parameters)$returnType'.replaceDartTypeToKotlin);
         break;
       case KotlinCodeType.sealed:
         final map =
@@ -49,10 +69,17 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
                     ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
                     : ''))
             .join('\n            ');
+
+        final invokeStr =
+            '$name(${method['arguments'].listValue.map((dynamic j) => j.name).join(', ')})';
+        final r = method['return'].stringValue == 'void'
+            ? 'result.success(rnrull)'
+            : 'result.success($invokeStr)';
         result.add('''        if (call.method == "$identifier#$name") {
             $vals
             // invoke $name
-            result.success($name(${method['arguments'].listValue.map((dynamic j) => j.name).join(', ')}))
+            ${method['return'].stringValue == "void" ? invokeStr : '// retrunType: ${method['return']}'}
+            $r
             return true
         }'''
             .replaceDartTypeToKotlin);
@@ -69,5 +96,6 @@ extension StringFaraday on String {
       .replaceAll('double', 'Double')
       .replaceAll('num', 'Double')
       .replaceAll('dynamic', 'Any')
-      .replaceAll('null', 'Any?');
+      .replaceAll('null', 'Any?')
+      .replaceAll('rnrull', 'null');
 }

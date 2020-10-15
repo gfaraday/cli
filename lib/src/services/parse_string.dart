@@ -108,5 +108,6 @@ extension MethodDeclarationFaraday on MethodDeclaration {
         'comments': comments,
         'name': funcName,
         'arguments': arguments.map((arg) => arg.info).toList(),
+        'return': returnType.toString()
       };
 }
