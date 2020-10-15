@@ -14,7 +14,7 @@
         "--project",
         "/Users/gix/Documents/yxr/gfraday/faraday_reborn",
         "-v",
-        "1.0.0+5",
+        "1.0.7+5",
         "--platforms",
         "ios",
       ]

@@ -254,7 +254,11 @@ ${_generateCocoapodsInstallTips()}
         source.substring(match.start, match.end - 1).split("'").last;
 
     log.config('Local flutter version: $localVersion');
+
     final podName = 'Flutter$mode';
+
+    dependencyPods.add(Pod(podName, localVersion));
+
     if (await podIsLatest(podName, localVersion)) {
       log.fine(podName + ': v$localVersion is Latest.');
       return localVersion;
@@ -266,7 +270,6 @@ ${_generateCocoapodsInstallTips()}
 
     await _generateTempPodSpecFileAndPublish(newSource, podName);
 
-    dependencyPods.add(Pod(podName, localVersion));
     return localVersion;
   }
 
@@ -291,8 +294,10 @@ ${_generateCocoapodsInstallTips()}
     for (final plugin in plugins) {
       final pluginName = plugin['name'].stringValue;
       // 获取当前 pubspec version
+      final source = packages[pluginName]['source'];
       final lockVersion = packages[pluginName]['version'];
-      if (await publish(pluginName, lockVersion)) {
+      if (await publish(
+          pluginName, source != 'hosted' ? version : lockVersion)) {
         hasNewPlugin = true;
       }
       // add plugins dependency
@@ -331,6 +336,11 @@ ${_generateCocoapodsInstallTips()}
       await processFlutterPluginRegistrant(buffer.toString());
 
       return version;
+    } else {
+      // 只添加依赖
+      final podName = moduleName + pluginRegistrant + (release ? '' : mode);
+      dependencyPods
+          .add(Pod(podName, await findPodLatestVersionInRepo(podName)));
     }
 
     return pv;
@@ -487,15 +497,14 @@ ${_generateCocoapodsInstallTips()}
   String _generateCocoapodsInstallTips() {
     final pods = dependencyPods
         .map((p) =>
-            " pod '${p.name}', '~> ${p.version}', :configuration => ${release ? 'release_configurations' : 'debug_configurations'}")
+            " pod '${p.name}'${release ? ", '~> ${p.version}'" : ""}, :configuration => ${release ? 'release_configurations' : 'debug_configurations'}")
         .join('\n  ');
 
-    return '''def install_flutter_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
+    return '''def install_faraday_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
   ${_3rddependencyPods.join('\n  ')}
-  # debug section
-  ${release ? '# Accept local changes' : '$pods'}
-  # release section
-  ${release ? '$pods' : '# Accept local changes'}
+  ...
+  $pods
+  ...
 end
   ''';
   }
