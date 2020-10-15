@@ -36,6 +36,16 @@ Map<String, Map<String, List<MethodDeclaration>>> parse(
                   } else {
                     routeMethods.add(method);
                   }
+
+                  // farady extension 调用，只需要处理一个类即可
+                  if (offset != null) {
+                    return {
+                      clazzName: {
+                        'common': commonMethods,
+                        'route': routeMethods
+                      }
+                    };
+                  }
                 }
               } else {
                 throw '被@common或者@entry装饰的必须为静态方法. [${clazzName}:${method.name}]不合法';

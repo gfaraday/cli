@@ -56,26 +56,28 @@ class CompletionCommand extends FaradayCommand {
 
     final r = parseCode();
 
-    final result = <String>[];
+    if (r.isEmpty) return '';
 
-    r.forEach((clazz, info) {
-      final common = info['common'];
-      if (common != null && common.isNotEmpty) {
-        result.addAll(common.map((m) =>
-            "FaradayCommon.invokeMethod('$clazz#${m.name}', {${m.arguments.map((p) => p.dartStyle).join(', ')}})"));
-      }
-      final route = info['route'];
-      if (route != null && route.isNotEmpty) {
-        result.addAll(route.map((m) {
-          final arguments = m.arguments.isNotEmpty
-              ? ", arguments: {${m.arguments.map((p) => p.dartStyle).join(', ')}}"
-              : null;
-          return "Navigator.of(context).pushNamed('${m.name.name.snakeCase}'${arguments ?? ''})";
-        }));
-      }
-    });
-    if (result.isEmpty) return '';
-    return result.first;
+    final clazz = r.keys.first;
+    final common = r.values.first['common'];
+    if (common != null && common.isNotEmpty) {
+      final method = common.first;
+      final arguments = method.arguments.isNotEmpty
+          ? ", {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
+          : '';
+      return "FaradayCommon.invokeMethod('$clazz#${method.name}'$arguments)";
+    }
+
+    final route = r.values.first['route'];
+    if (route != null && route.isNotEmpty) {
+      final method = common.first;
+      final arguments = method.arguments.isNotEmpty
+          ? ", arguments: {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
+          : null;
+      return "Navigator.of(context).pushNamed('${method.name.name.snakeCase}'${arguments ?? ''})";
+    }
+
+    return '';
   }
 }
 
