@@ -70,7 +70,7 @@ class CompletionCommand extends FaradayCommand {
 
     final route = r.values.first['route'];
     if (route != null && route.isNotEmpty) {
-      final method = common.first;
+      final method = route.first;
       final arguments = method.arguments.isNotEmpty
           ? ", arguments: {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
           : null;
