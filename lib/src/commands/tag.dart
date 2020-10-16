@@ -25,12 +25,11 @@ final _3rddependencyPods = <String>[];
 class TagCommand extends FaradayCommand {
   TagCommand() : super() {
     argParser.addOption('project');
-    argParser.addFlag('release', defaultsTo: false);
-    argParser.addOption('version', abbr: 'v', help: '版本号例如: 1.2.3+2391');
+    argParser.addFlag('release', negatable: true, defaultsTo: false);
+    argParser.addOption('version', abbr: 'v', help: '版本号例如: 1.2.3');
     argParser.addOption('static-file-server-address',
         abbr: 's', help: '文件服务器地址');
     argParser.addOption('repo-name', help: 'private spec repo');
-
     argParser.addMultiOption('platforms',
         allowed: ['ios', 'android'], defaultsTo: ['ios', 'android']);
   }
@@ -70,7 +69,7 @@ class TagCommand extends FaradayCommand {
 
   @override
   Future run() async {
-    _platforms = stringsArg('platforms') ?? ['ios', 'android'];
+    _platforms = stringsArg('platforms');
     _project = stringArg('project') ?? path.current;
 
     // 确定存在
@@ -85,8 +84,11 @@ class TagCommand extends FaradayCommand {
 
     final androidPackage = module['androidPackage'];
 
-    _version = stringArg('version');
-    if (version == null || version.isEmpty) throwToolExit('version not valid');
+    _version = stringArg('version') ?? _pubspec['version'];
+    if (version == null || version.isEmpty) {
+      //
+      throwToolExit('version not found');
+    }
 
     _release = boolArg('release') ?? false;
 
@@ -122,15 +124,12 @@ class TagCommand extends FaradayCommand {
       _repoURL = repoList[index + 2].split(' ').last;
     }
 
-    // update debug message.
-    final versionNumber = version.split('+').last;
-
     log.fine('Update debug message to lib/src/debug/debug.dart');
     final debugFile =
         File(path.join(shell.workingDirectory, 'lib/src/debug/debug.dart'))
           ..createSync(recursive: true);
 
-    await debugFile.writeAsString(d_debug(versionNumber), mode: FileMode.write);
+    await debugFile.writeAsString(d_debug(version), mode: FileMode.write);
 
     log.fine('Clean workspace...');
     log.config(await shell.startAndReadAsString('flutter', ['clean']));
@@ -234,8 +233,11 @@ ${_generateCocoapodsInstallTips()}
     }
 
     // 打印集成提示
-    log.info('\nConsuming the Module:\n');
-    log.info(guide);
+    // log.info('\nConsuming the Module:\n');
+    // log.info(guide);
+
+    await shell.startAndReadAsString(
+        'git', ['checkout', '--', 'lib/src/debug/debug.dart']);
 
     return guide;
   }
