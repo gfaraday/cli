@@ -88,7 +88,7 @@ enum FaradayRoute {
     }
 
     func viewController(callback: @escaping (Any?) -> () = { r in debugPrint("result don't be used \(String(describing: r))")}) -> FaradayFlutterViewController {
-        return Faraday.createFlutterViewController(page.name, arguments: page.arguments, callback: callback)
+        return FaradayFlutterViewController(page.name, arguments: page.arguments, callback: callback)
     }
 }
 
