@@ -501,7 +501,7 @@ ${_generateCocoapodsInstallTips()}
   String _generateCocoapodsInstallTips() {
     final pods = dependencyPods
         .map((p) =>
-            " pod '${p.name}'${release ? ", '~> ${p.version}'" : ""}, :configuration => ${release ? 'release_configurations' : 'debug_configurations'}")
+            " pod '${p.name}', '~> ${p.version}', :configuration => ${release ? 'release_configurations' : 'debug_configurations'}")
         .join('\n  ');
 
     return '''def install_faraday_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
