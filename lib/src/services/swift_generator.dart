@@ -26,9 +26,9 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
         } else if (r.startsWith('Future<') && r.endsWith('>')) {
           final realType = r.substring(7, r.length - 1);
           if (realType.startsWith('Map')) {
-            returnType = ' -> [String: Any?]';
+            returnType = ' -> [String: Any]?';
           } else if (realType.startsWith('List')) {
-            returnType = ' -> [Any?]';
+            returnType = ' -> [Any]?';
           } else {
             returnType = ' -> $realType';
           }
