@@ -188,6 +188,12 @@ For Android Developer:
     }
 
     if (platforms.contains('ios')) {
+      // 修改podfile
+      final podfile = File(path.join(shell.workingDirectory, '.ios/Podfile'));
+      final podfileContent = await podfile.readAsStringSync();
+      await podfile
+          .writeAsStringSync(podfileContent.replaceFirst('8.0', '10.0'));
+
       log.fine('Build ios-framework $version');
       await shell.startAndReadAsString('flutter', [
         'build',
