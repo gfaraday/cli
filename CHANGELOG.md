@@ -1,4 +1,8 @@
-# 1.1.5
+# 1.1.6
+
+- refine swift generator
+
+## 1.1.5
 
 - fix typo
 
