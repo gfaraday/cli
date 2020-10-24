@@ -18,28 +18,32 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final parameters = args
             .map((dynamic j) =>
                 '${j.name}: ${j['type'].stringValue}${j.isRequired ? '' : '?'}')
-            .join(', ');
+            .toList();
         final r = method['return'].stringValue;
 
         String returnType;
 
         if (r == 'null' || r == 'dynamic') {
-          returnType = ': Any?';
+          returnType = 'Any?';
         } else if (r == 'void') {
           returnType = '';
         } else if (r.startsWith('Future<') && r.endsWith('>')) {
           final realType = r.substring(7, r.length - 1);
           if (realType.startsWith('Map')) {
-            returnType = ': Map<String, *>';
+            returnType = 'Map<String, *>';
           } else if (realType.startsWith('List')) {
-            returnType = ': List<*>';
+            returnType = 'List<*>';
           } else {
-            returnType = ': $realType';
+            returnType = realType;
           }
         }
 
+        if (returnType.isNotEmpty) {
+          parameters.add('callback: ($returnType) -> Unit');
+        }
+
         result.add(comments +
-            '    fun $name($parameters)$returnType'.replaceDartTypeToKotlin);
+            "    fun $name(${parameters.join(', ')})".replaceDartTypeToKotlin);
         break;
       case KotlinCodeType.sealed:
         final map =
@@ -70,16 +74,26 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
                     : ''))
             .join('\n            ');
 
-        final invokeStr =
+        var invokeStr =
             '$name(${method['arguments'].listValue.map((dynamic j) => j.name).join(', ')})';
-        final r = method['return'].stringValue == 'void'
-            ? 'result.success(rnrull)'
-            : 'result.success($invokeStr)';
+        final hasReturnType = method['return'].stringValue != 'void';
+        if (hasReturnType) {
+          if (vals.isEmpty) {
+            invokeStr = invokeStr.replaceFirst('()', '');
+          }
+          invokeStr = '''$invokeStr {
+               result.success(it)
+            }''';
+        } else {
+          invokeStr += '\n            result.success(rnrull)';
+        }
+
+        if (vals.isNotEmpty) {
+          invokeStr = vals + '\n            $invokeStr';
+        }
+
         result.add('''        if (call.method == "$identifier#$name") {
-            $vals
-            // invoke $name
-            ${method['return'].stringValue == "void" ? invokeStr : '// retrunType: ${method['return']}'}
-            $r
+            $invokeStr
             return true
         }'''
             .replaceDartTypeToKotlin);

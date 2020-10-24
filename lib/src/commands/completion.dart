@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:faraday/src/commands/command.dart';
-import 'package:faraday/src/services/parse_string.dart';
+import 'command.dart';
+import '../services/parse_string.dart';
 import 'package:faraday/src/utils/exception.dart';
 import 'package:recase/recase.dart';
 

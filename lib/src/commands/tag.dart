@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:faraday/src/commands/command.dart';
-import 'package:faraday/src/template/template.dart';
 import 'package:faraday/src/utils/exception.dart';
 import 'package:g_json/g_json.dart';
 import 'package:path/path.dart' as path;
 import 'package:recase/recase.dart';
 import 'package:shell/shell.dart';
 import 'package:yaml/yaml.dart';
+
+import '../template/template.dart';
+import 'command.dart';
 
 const pluginRegistrant = 'FlutterPluginRegistrant';
 

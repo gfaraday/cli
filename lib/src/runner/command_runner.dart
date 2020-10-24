@@ -1,9 +1,9 @@
 import 'package:args/command_runner.dart';
-import 'package:faraday/src/commands/completion.dart';
 
+import '../commands/completion.dart';
 import '../commands/generate.dart';
-import '../commands/tag.dart';
 import '../commands/init.dart';
+import '../commands/tag.dart';
 import '../commands/upgrade.dart';
 
 class FaradayCommandRunner extends CommandRunner {

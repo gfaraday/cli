@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:faraday/src/commands/command.dart';
+import 'command.dart';
 
 class UpgradeCommand extends FaradayCommand {
   @override
@@ -17,8 +17,9 @@ class UpgradeCommand extends FaradayCommand {
     if (Platform.isWindows) {
       var process = Process.runSync('where', ['faraday'], runInShell: true);
 
-      isFlutterDart =
-          process.stdout.toString().contains('flutter\\.pub-cache\\bin\\faraday');
+      isFlutterDart = process.stdout
+          .toString()
+          .contains('flutter\\.pub-cache\\bin\\faraday');
     } else {
       var process = Process.runSync('which', ['faraday'], runInShell: true);
       isFlutterDart =
@@ -31,7 +32,8 @@ class UpgradeCommand extends FaradayCommand {
           runInShell: true);
     } else {
       log.config('Upgrade in Dart VM');
-      Process.runSync('pub', ['global', 'activate', 'faraday'], runInShell: true);
+      Process.runSync('pub', ['global', 'activate', 'faraday'],
+          runInShell: true);
     }
 
     var process = Process.runSync('faraday', ['-v'],

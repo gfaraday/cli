@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:faraday/src/services/kotlin_generator.dart';
 import 'package:g_json/g_json.dart';
 
 import '../utils/exception.dart';
+import 'kotlin_generator.dart';
 import 'parse_string.dart';
 import 'swift_generator.dart';
 

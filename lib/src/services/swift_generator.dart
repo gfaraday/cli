@@ -8,11 +8,13 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
   final result = <String>[];
   for (final method in methods) {
     final name = method['name'].stringValue;
+
     final args = method['arguments']
         .listValue
         .map((j) =>
             "_ ${j['name'].stringValue}: ${j['type'].stringValue}${j['isRequired'].booleanValue ? '' : '?'}")
-        .join(', ');
+        .toList();
+
     switch (type) {
       case SwiftCodeType.protocol:
         final r = method['return'].stringValue;
@@ -20,27 +22,31 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
         String returnType;
 
         if (r == 'null' || r == 'dynamic') {
-          returnType = ' -> Any?';
+          returnType = 'Any?';
         } else if (r == 'void') {
           returnType = '';
         } else if (r.startsWith('Future<') && r.endsWith('>')) {
           final realType = r.substring(7, r.length - 1);
           if (realType.startsWith('Map')) {
-            returnType = ' -> [String: Any]?';
+            returnType = '[String: Any]?';
           } else if (realType.startsWith('List')) {
-            returnType = ' -> [Any]?';
+            returnType = '[Any]?';
           } else {
-            returnType = ' -> $realType';
+            returnType = '$realType';
           }
+        }
+
+        if (returnType.isNotEmpty) {
+          args.add('_ completion: @escaping (_ result: $returnType) -> Void');
         }
 
         result.add('\n    ' +
             (method['comments'].string?.replaceAll('\n', '\n    ') ??
                 '// NO COMMENTS') +
-            '\n    func $name($args)$returnType'.replaceDartTypeToSwift);
+            '\n    func $name(${args.join(', ')})'.replaceDartTypeToSwift);
         break;
       case SwiftCodeType.enmu:
-        var r = "    case $name${args.isEmpty ? '' : '($args)'}";
+        var r = "    case $name${args.isEmpty ? '' : "(${args.join(', ')})"}";
         final comments =
             method['comments'].string?.replaceAll('\n', '\n    ') ?? '';
         if (comments.isNotEmpty) {
@@ -62,16 +68,19 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
       case SwiftCodeType.impl:
         final lets =
             method['arguments'].listValue.map((j) => j.getter()).join('\n');
-        final invokeStr =
-            '$name(${method['arguments'].listValue.map((j) => j.name).join(', ')})';
-        final r = method['return'].stringValue == 'void'
-            ? 'completion(nil)'
-            : 'completion($invokeStr)';
+
+        final hasReturnType = method['return'].stringValue != 'void';
+
+        final args = method['arguments'].listValue.map((j) => j.name).toList();
+        if (hasReturnType) args.add('completion');
+
+        final invokeStr = "$name(${args.join(', ')})";
+
         result.add('''        if (name == "$identifier#$name") {
 $lets
             // invoke $name
-            ${method['return'].stringValue == "void" ? invokeStr : '// retrunType: ${method['return']}'}
-            $r
+            $invokeStr
+            ${hasReturnType ? '' : 'completion(nil)'}
             return true
         }'''
             .replaceDartTypeToSwift);
