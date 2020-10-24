@@ -1,4 +1,8 @@
-# 1.1.7
+# 1.1.8
+
+- update swift&kotlin generator
+
+## 1.1.7
 
 - modify min-deployment target.
 
