@@ -1,4 +1,8 @@
-# 1.1.6
+# 1.1.7
+
+- modify min-deployment target.
+
+## 1.1.6
 
 - refine swift generator
 
