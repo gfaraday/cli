@@ -463,11 +463,16 @@ ${_generateCocoapodsInstallTips()}
     final formData = FormData.fromMap(
         {'file': await MultipartFile.fromFile(file, filename: filename)});
     try {
-      await dio.post('/', data: formData);
+      // 安卓会生成特别多的小文件，适当控制一下上传频率
+      await Future.wait([
+        dio.post('/', data: formData),
+        Future.delayed(Duration(milliseconds: 500))
+      ]);
+      retryTimes = 0;
     } catch (_) {
       if (retryTimes <= 5) {
         retryTimes++;
-        log.warning('update failed retry $retryTimes ...');
+        log.warning('update ${file} failed retry $retryTimes ...');
         upload(file, filename: filename);
       } else {
         throwToolExit('upload failed: file: $file');
