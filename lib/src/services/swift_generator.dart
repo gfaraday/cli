@@ -12,8 +12,8 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
     final args = method['arguments']
         .listValue
         .map((j) =>
-            "_ ${j['name'].stringValue}: ${j['type'].stringValue}${j['isRequired'].booleanValue ? '' : '?'}")
-        .toList();
+            "_ ${j['name'].stringValue}: ${j['type'].stringValue.replaceDartTypeToSwift}${j['isRequired'].booleanValue ? '' : '?'}")
+        .toList(growable: false);
 
     switch (type) {
       case SwiftCodeType.protocol:
@@ -32,18 +32,19 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
           } else if (realType.startsWith('List')) {
             returnType = '[Any]?';
           } else {
-            returnType = '$realType';
+            returnType = realType;
           }
         }
 
         if (returnType.isNotEmpty) {
-          args.add('_ completion: @escaping (_ result: $returnType) -> Void');
+          args.add(
+              '_ completion: @escaping (_ result: ${returnType.replaceDartTypeToSwift}) -> Void');
         }
 
         result.add('\n    ' +
             (method['comments'].string?.replaceAll('\n', '\n    ') ??
                 '// NO COMMENTS') +
-            '\n    func $name(${args.join(', ')})'.replaceDartTypeToSwift);
+            '\n    func $name(${args.join(', ')})');
         break;
       case SwiftCodeType.enmu:
         var r = "    case $name${args.isEmpty ? '' : "(${args.join(', ')})"}";
@@ -52,7 +53,7 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
         if (comments.isNotEmpty) {
           r = '    $comments\n$r';
         }
-        result.add(r.replaceDartTypeToSwift);
+        result.add(r);
         break;
       case SwiftCodeType.enumPage:
         final arguments = method['arguments'].listValue;
@@ -71,7 +72,11 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
 
         final hasReturnType = method['return'].stringValue != 'void';
 
-        final args = method['arguments'].listValue.map((j) => j.name).toList();
+        final args = method['arguments']
+            .listValue
+            .map((j) => j.name)
+            .toList(growable: false);
+
         if (hasReturnType) args.add('completion');
 
         final invokeStr = "$name(${args.join(', ')})";
@@ -82,8 +87,7 @@ $lets
             $invokeStr
             ${hasReturnType ? '' : 'completion(nil)'}
             return true
-        }'''
-            .replaceDartTypeToSwift);
+        }''');
         break;
     }
   }
@@ -92,12 +96,11 @@ $lets
 
 extension JSONArguments on JSON {
   String get name => this['name'].stringValue;
-  String get argumentType => this['type'].stringValue;
+  String get argumentType => this['type'].stringValue.replaceDartTypeToSwift;
   bool get isRequired => this['isRequired'].booleanValue;
 
   String getter() {
-    final let =
-        'let $name = args?["$name"] as? $argumentType'.replaceDartTypeToSwift;
+    final let = 'let $name = args?["$name"] as? $argumentType';
     if (isRequired) {
       if (argumentType == 'dynamic') {
         return '''

@@ -17,7 +17,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
             .map((dynamic j) =>
-                '${j.name}: ${j['type'].stringValue}${j.isRequired ? '' : '?'}')
+                '${j.name}: ${j['type'].stringValue.replaceDartTypeToKotlin}${j.isRequired ? '' : '?'}')
             .toList();
         final r = method['return'].stringValue;
 
@@ -39,17 +39,18 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         }
 
         if (returnType.isNotEmpty) {
-          parameters.add('callback: ($returnType) -> Unit');
+          parameters
+              .add('callback: (${returnType.replaceDartTypeToKotlin}) -> Unit');
         }
 
-        result.add(comments +
-            "    fun $name(${parameters.join(', ')})".replaceDartTypeToKotlin);
+        result.add(comments + "    fun $name(${parameters.join(', ')})");
         break;
       case KotlinCodeType.sealed:
         final map =
             args.map((dynamic j) => '"${j.name}" to ${j.name}').join(', ');
         final properties = args
-            .map((dynamic j) => 'val ${j.name}: ${j['type'].stringValue}')
+            .map((dynamic j) =>
+                'val ${j.name}: ${j['type'].stringValue.replaceDartTypeToKotlin}')
             .join(', ');
         final parameters = map.isEmpty ? 'null' : 'hashMapOf($map)';
         var comments =
@@ -60,15 +61,14 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
               '    object ${name.pascalCase}: FlutterRoute("${name.snakeCase}")');
         } else {
           result.add(comments +
-              '    data class ${name.pascalCase}($properties): FlutterRoute("${name.snakeCase}", $parameters)'
-                  .replaceDartTypeToKotlin);
+              '    data class ${name.pascalCase}($properties): FlutterRoute("${name.snakeCase}", $parameters)');
         }
         break;
       case KotlinCodeType.impl:
         final vals = method['arguments']
             .listValue
             .map((dynamic j) =>
-                'val ${j.name} = args["${j.name}"] as? ${j["type"].stringValue}' +
+                'val ${j.name} = args["${j.name}"] as? ${j["type"].stringValue.replaceDartTypeToKotlin}' +
                 (j.isRequired
                     ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
                     : ''))
@@ -95,8 +95,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         result.add('''        if (call.method == "$identifier#$name") {
             $invokeStr
             return true
-        }'''
-            .replaceDartTypeToKotlin);
+        }''');
         break;
     }
   }
