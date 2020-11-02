@@ -85,7 +85,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
                result.success(it)
             }''';
         } else {
-          invokeStr += '\n            result.success(rnrull)';
+          invokeStr += '\n            result.success(null)';
         }
 
         if (vals.isNotEmpty) {
@@ -109,6 +109,5 @@ extension StringFaraday on String {
       .replaceAll('double', 'Double')
       .replaceAll('num', 'Double')
       .replaceAll('dynamic', 'Any')
-      .replaceAll('null', 'Any?')
-      .replaceAll('rnrull', 'null');
+      .replaceAll('null', 'Any?');
 }
