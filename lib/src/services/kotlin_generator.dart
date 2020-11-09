@@ -3,6 +3,17 @@ import 'package:recase/recase.dart';
 
 enum KotlinCodeType { interface, sealed, impl }
 
+extension KotlinJSON on JSON {
+  String get kotlin => stringValue
+    ..replaceAll('bool', 'Boolean')
+        .replaceAll('int', 'Int')
+        .replaceAll('float', 'Float')
+        .replaceAll('double', 'Double')
+        .replaceAll('num', 'Double')
+        .replaceAll('dynamic', 'Any')
+        .replaceAll('null', 'Any?');
+}
+
 List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
     {String identifier}) {
   final result = <String>[];
@@ -17,7 +28,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
             .map((dynamic j) =>
-                '${j.name}: ${j['type'].stringValue.replaceDartTypeToKotlin}${j.isRequired ? '' : '?'}')
+                '${j.name}: ${j['type'].kotlin}${j.isRequired ? '' : '?'}')
             .toList();
         final r = method['return'].stringValue;
 
@@ -39,8 +50,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         }
 
         if (returnType.isNotEmpty) {
-          parameters
-              .add('callback: (${returnType.replaceDartTypeToKotlin}) -> Unit');
+          parameters.add('callback: (${JSON(returnType).kotlin}) -> Unit');
         }
 
         result.add(comments + "    fun $name(${parameters.join(', ')})");
@@ -49,8 +59,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final map =
             args.map((dynamic j) => '"${j.name}" to ${j.name}').join(', ');
         final properties = args
-            .map((dynamic j) =>
-                'val ${j.name}: ${j['type'].stringValue.replaceDartTypeToKotlin}')
+            .map((dynamic j) => 'val ${j.name}: ${j['type'].kotlin}')
             .join(', ');
         final parameters = map.isEmpty ? 'null' : 'hashMapOf($map)';
         var comments =
@@ -68,7 +77,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final vals = method['arguments']
             .listValue
             .map((dynamic j) =>
-                'val ${j.name} = args["${j.name}"] as? ${j["type"].stringValue.replaceDartTypeToKotlin}' +
+                'val ${j.name} = args["${j.name}"] as? ${j["type"].kotlin}' +
                 (j.isRequired
                     ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
                     : ''))
@@ -100,14 +109,4 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
     }
   }
   return result;
-}
-
-extension StringFaraday on String {
-  String get replaceDartTypeToKotlin => replaceAll('bool', 'Boolean')
-      .replaceAll('int', 'Int')
-      .replaceAll('float', 'Float')
-      .replaceAll('double', 'Double')
-      .replaceAll('num', 'Double')
-      .replaceAll('dynamic', 'Any')
-      .replaceAll('null', 'Any?');
 }

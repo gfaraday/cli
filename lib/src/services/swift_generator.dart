@@ -13,7 +13,7 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
         .listValue
         .map((j) =>
             "_ ${j['name'].stringValue}: ${j['type'].stringValue.replaceDartTypeToSwift}${j['isRequired'].booleanValue ? '' : '?'}")
-        .toList(growable: false);
+        .toList();
 
     switch (type) {
       case SwiftCodeType.protocol:
@@ -34,6 +34,8 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
           } else {
             returnType = realType;
           }
+        } else {
+          returnType = '';
         }
 
         if (returnType.isNotEmpty) {
@@ -72,10 +74,7 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
 
         final hasReturnType = method['return'].stringValue != 'void';
 
-        final args = method['arguments']
-            .listValue
-            .map((j) => j.name)
-            .toList(growable: false);
+        final args = method['arguments'].listValue.map((j) => j.name).toList();
 
         if (hasReturnType) args.add('completion');
 

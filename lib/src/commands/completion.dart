@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:analyzer/dart/ast/ast.dart';
-import 'command.dart';
-import '../services/parse_string.dart';
 import 'package:faraday/src/utils/exception.dart';
-import 'package:recase/recase.dart';
+
+import '../services/parse_string.dart';
+import 'command.dart';
 
 class CompletionCommand extends FaradayCommand {
   CompletionCommand() : super() {
@@ -32,7 +31,7 @@ class CompletionCommand extends FaradayCommand {
         Utf8Decoder().convert(base64Decode(stringArg('source-code')));
     if (sourceCode.isEmpty) return '';
 
-    Map<String, Map<String, List<MethodDeclaration>>> parseCode() {
+    List<ParseResult> parseCode() {
       final lineSplitter = LineSplitter();
       final lines = lineSplitter.convert(sourceCode);
 
@@ -58,26 +57,14 @@ class CompletionCommand extends FaradayCommand {
 
     if (r.isEmpty) return '';
 
-    final clazz = r.keys.first;
-    final common = r.values.first['common'];
-    if (common != null && common.isNotEmpty) {
-      final method = common.first;
-      final arguments = method.arguments.isNotEmpty
-          ? ", {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
-          : '';
-      return "FaradayCommon.invokeMethod('$clazz#${method.name}'$arguments)";
-    }
+    final pr = r.first;
+    if (pr == null || pr.commons.isEmpty) return '';
 
-    final route = r.values.first['route'];
-    if (route != null && route.isNotEmpty) {
-      final method = route.first;
-      final arguments = method.arguments.isNotEmpty
-          ? ", arguments: {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
-          : null;
-      return "Navigator.of(context).pushNamed('${method.name.name.snakeCase}'${arguments ?? ''})";
-    }
-
-    return '';
+    final method = pr.commons.first;
+    final arguments = method.arguments.isNotEmpty
+        ? ", {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
+        : '';
+    return "FaradayCommon.invokeMethod('${pr.className}#${method.name}'$arguments)";
   }
 }
 

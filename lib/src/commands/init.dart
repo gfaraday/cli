@@ -11,12 +11,6 @@ import '../utils/exception.dart';
 class InitCommand extends FaradayCommand {
   InitCommand() : super() {
     argParser.addOption('project', abbr: 'p');
-    argParser.addOption('ios-common', help: '初始化 ios FaradayCommon.swift');
-    argParser.addOption('ios-route', help: '初始化 ios FaradayRoute.swift');
-    argParser.addOption('ios-net', help: '初始化 ios FaradayNet.swift');
-    argParser.addOption('android-common', help: '初始化 android Common.kt');
-    argParser.addOption('android-route', help: '初始化 android Route.kt');
-    argParser.addOption('android-net', help: '初始化 android Net.kt');
   }
 
   @override
@@ -42,6 +36,12 @@ class InitCommand extends FaradayCommand {
     var projectPath = stringArg('project');
     if (projectPath == null || projectPath.isEmpty) {
       projectPath = path.current;
+      // 确定当前目录是一个 flutter module 目录，否则报错
+      final metadataFile = File(path.join(projectPath, '.metadata'));
+      if (!metadataFile.existsSync() ||
+          !metadataFile.readAsStringSync().contains('project_type: module')) {
+        throwToolExit('Only support flutter module project.');
+      }
     }
 
     log.fine('Init debug message to lib/src/debug/debug.dart');
@@ -50,26 +50,24 @@ class InitCommand extends FaradayCommand {
 
     debugFile.writeAsStringSync(t.d_debug(), mode: FileMode.write);
 
+    log.fine('Init route to lib/src/routes.dart');
+    final routeFile = File(path.join(projectPath, 'lib/src/routes.dart'))
+      ..createSync(recursive: true);
+    routeFile.writeAsStringSync(t.d_route(), mode: FileMode.write);
+
     final configPath = path.join(projectPath, '.faraday.json');
     final config = JSON.parse(File(configPath).readAsStringSync());
 
-    final ios_common = stringArg('ios-common') ?? config['ios-common'].string;
-    final ios_route = stringArg('ios-route') ?? config['ios-route'].string;
-    // final ios_net = stringArg('ios-net') ?? config['ios-net'].string;
-    final android_common =
-        stringArg('android-common') ?? config['android-common'].string;
-    final android_route =
-        stringArg('android-route') ?? config['android-route'].string;
-    // final android_net =
-    //     stringArg('android-net') ?? config['android-net'].string;
+    final ios_common = config['ios-common'].string;
+    final ios_route = config['ios-route'].string;
+    final android_common = config['android-common'].string;
+    final android_route = config['android-route'].string;
 
     final outputs = <String, String>{
       if (ios_common != null) ios_common: t.s_common,
       if (ios_route != null) ios_route: t.s_route,
-      // if (ios_net != null) ios_net: t.s_net,
       if (android_common != null) android_common: t.k_common,
       if (android_route != null) android_route: t.k_route,
-      // if (android_net != null) android_net: t.k_net,
     };
 
     if (outputs.isNotEmpty) {

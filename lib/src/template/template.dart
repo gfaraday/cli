@@ -148,3 +148,19 @@ $_header
 const debugVersionMessage = '$message';
 ''';
 }
+
+String d_route() {
+  return '''import 'package:flutter/cupertino.dart';
+import 'package:g_faraday/g_faraday.dart';
+
+Route<dynamic> routeFactory(RouteSettings settings) {
+  final dynamic args = JSON(settings);
+
+  switch (settings.name) {
+    // ---> route
+    default:
+      return null;
+  }
+}
+  ''';
+}

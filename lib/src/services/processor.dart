@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:faraday/src/services/dart_generator.dart';
 import 'package:g_json/g_json.dart';
+import 'package:recase/recase.dart';
 
 import '../utils/exception.dart';
 import 'kotlin_generator.dart';
@@ -62,19 +65,46 @@ void process(String sourceCode, String projectRoot, String identifier,
     }
   }
 
-  final r = parse(sourceCode: sourceCode);
-
-  // 遍历信息 准备生成 代码
-  r.forEach((clazz, info) {
-    final commons = info['common']?.map((m) => JSON(m.info))?.toList() ?? [];
-    final routes = info['route']?.map((m) => JSON(m.info))?.toList() ?? [];
-    if (commons.isNotEmpty || routes.isNotEmpty) {
-      _flushSwift(clazz, commonMethods: commons, routeMethods: routes);
-      _flushKotlin(clazz, commonMethods: commons, routeMethods: routes);
-      print(
-          'flush $clazz [${commons.length}]common(s) & [${routes.length}]route(s)');
+  void _flushDart(List<ParseResult> results) {
+    final dartRouteFile = outputs['dart-route'];
+    if (dartRouteFile != null) {
+      for (final r in results) {
+        final contents = generateDart(
+          r.entry is MethodDeclaration ? JSON(r.entry.info) : null,
+          identifier: r.className,
+          flutterOnly: !r.needGenerateNativeRoute,
+        );
+        flush(contents, 'route', r.className, dartRouteFile,
+            indentation: '    ');
+      }
     }
-  });
+  }
+
+  final prs = parse(sourceCode: sourceCode);
+
+  final routes = prs.where((p) => p.entry != null);
+  if (routes.length != Set.from(routes.map((r) => r.className)).length) {
+    throwToolExit('不能注册名称相同的entry $routes');
+  }
+
+  // 先生成 dart 路由
+  _flushDart(routes.toList(growable: false));
+
+  // 处理 swift & kotlin
+  for (final pr in prs) {
+    final commons =
+        pr.commons?.map((e) => JSON(e.info))?.toList(growable: false) ?? [];
+    final routes = <JSON>[];
+    if (pr.entry != null && pr.needGenerateNativeRoute) {
+      final info = JSON(pr.entry.info);
+      info['name'] = pr.className.camelCase;
+      routes.add(info);
+    }
+    _flushSwift(pr.className,
+        commonMethods: List.from(commons), routeMethods: routes);
+    _flushKotlin(pr.className,
+        commonMethods: List.from(commons), routeMethods: routes);
+  }
 }
 
 void flush(

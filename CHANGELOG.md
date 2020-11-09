@@ -1,4 +1,11 @@
-# 1.1.9
+# 1.2.0
+
+* Break Changes: migrate to new g_faraday.
+
+- update swift&kotlin generator
+- and dart generator
+
+## 1.1.9
 
 - update swift&kotlin generator
 
