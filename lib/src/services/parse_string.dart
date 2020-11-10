@@ -19,6 +19,7 @@ bool isSupportedType(String type) {
   return supportedDartType.any((t) =>
       type.contains(t) ||
       type.contains('Future<List') || // List<dynamic>
+      type.contains('List<dynamic>') ||
       type.contains('Future<Map')); // Map<dynamic>
 }
 
