@@ -10,100 +10,100 @@
 
 ## 1.1.9
 
-- update swift&kotlin generator
+* update swift&kotlin generator
 
 ## 1.1.8
 
-- update swift&kotlin generator
+* update swift&kotlin generator
 
 ## 1.1.7
 
-- modify min-deployment target.
+* modify min*deployment target.
 
 ## 1.1.6
 
-- refine swift generator
+* refine swift generator
 
 ## 1.1.5
 
-- fix typo
+* fix typo
 
 # 1.1.4
 
-- fix typo
+* fix typo
 
 ## 1.1.3
 
-- update swift&kotlin template.
+* update swift&kotlin template.
 
 ## 1.1.2
 
-- 性能优化
+* 性能优化
 
 ## 1.1.1
 
-- refine completion command
+* refine completion command
 
 ## 1.1.0
 
-- refine completion command
+* refine completion command
 
 ## 1.0.13
 
-- refine completion command
+* refine completion command
 
 ## 1.0.12
 
-- refine completion command
+* refine completion command
 
 ## 1.0.11
 
-- refine completion command
+* refine completion command
 
 ## 1.0.10
 
-- refine completion command
+* refine completion command
 
 ## 1.0.9
 
-- refine completion command
+* refine completion command
 
 ## 1.0.8
 
-- refine completion command
+* refine completion command
 
 ## 1.0.7
 
-- ignore podName for tag aar flow
+* ignore podName for tag aar flow
 
-- refine android install tips
+* refine android install tips
 
 ## 1.0.6
 
-- fix bug
+* fix bug
 
 ## 1.0.5
 
-- fix bug
+* fix bug
 
 ## 1.0.4
 
-- fix bug
+* fix bug
 
 ## 1.0.3
 
-- Support Log_LEVEL
+* Support Log_LEVEL
 
-- Print Command Result
+* Print Command Result
 
 ## 1.0.2
 
-- Refine tag command
+* Refine tag command
 
 ## 1.0.1
 
-- Refine tag command
+* Refine tag command
 
 ## 1.0.0
 
-- Initial version, created by Stagehand
+* Initial version, created by Stagehand
