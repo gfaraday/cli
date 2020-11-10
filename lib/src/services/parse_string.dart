@@ -16,7 +16,10 @@ const supportedDartType = [
 
 bool isSupportedType(String type) {
   // 暂时支持参数重包含 dynamic类型， 请自行确保 dynamic 可以序列化为json
-  return supportedDartType.any((t) => type.contains(t));
+  return supportedDartType.any((t) =>
+      type.contains(t) ||
+      type.contains('Future<List') || // List<dynamic>
+      type.contains('Future<Map')); // Map<dynamic>
 }
 
 class ParseResult {
