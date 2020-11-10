@@ -4,7 +4,7 @@ import 'package:recase/recase.dart';
 List<String> generateDart(JSON method,
     {String identifier, bool flutterOnly = true}) {
   final result = <String>[];
-  if (!flutterOnly) {
+  if (flutterOnly) {
     result.add('    /// no native routed generated');
   }
   result.add("    case '${identifier.snakeCase}':");
