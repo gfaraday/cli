@@ -5,13 +5,13 @@ enum KotlinCodeType { interface, sealed, impl }
 
 String replaceDartToKotlin(String source) {
   return source
-    ..replaceAll('bool', 'Boolean')
-        .replaceAll('int', 'Int')
-        .replaceAll('float', 'Float')
-        .replaceAll('double', 'Double')
-        .replaceAll('num', 'Double')
-        .replaceAll('dynamic', 'Any')
-        .replaceAll('null', 'Any?');
+      .replaceAll('bool', 'Boolean')
+      .replaceAll('int', 'Int')
+      .replaceAll('float', 'Float')
+      .replaceAll('double', 'Double')
+      .replaceAll('num', 'Double')
+      .replaceAll('dynamic', 'Any')
+      .replaceAll('null', 'Any?');
 }
 
 List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,

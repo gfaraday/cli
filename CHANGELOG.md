@@ -1,4 +1,8 @@
-# 1.2.2
+# 1.2.3
+
+* fix typo
+
+## 1.2.2
 
 * fix typo
 * fix kotlin generator
