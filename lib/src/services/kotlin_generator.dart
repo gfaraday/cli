@@ -3,8 +3,8 @@ import 'package:recase/recase.dart';
 
 enum KotlinCodeType { interface, sealed, impl }
 
-extension KotlinJSON on JSON {
-  String get kotlin => stringValue
+String replaceDartToKotlin(String source) {
+  return source
     ..replaceAll('bool', 'Boolean')
         .replaceAll('int', 'Int')
         .replaceAll('float', 'Float')
@@ -28,7 +28,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
             .map((dynamic j) =>
-                '${j.name}: ${j['type'].kotlin}${j.isRequired ? '' : '?'}')
+                '${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}${j.isRequired ? '' : '?'}')
             .toList();
         final r = method['return'].stringValue;
 
@@ -50,7 +50,8 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         }
 
         if (returnType.isNotEmpty) {
-          parameters.add('callback: (${JSON(returnType).kotlin}) -> Unit');
+          parameters
+              .add('callback: (${replaceDartToKotlin(returnType)}) -> Unit');
         }
 
         result.add(comments + "    fun $name(${parameters.join(', ')})");
@@ -59,7 +60,8 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final map =
             args.map((dynamic j) => '"${j.name}" to ${j.name}').join(', ');
         final properties = args
-            .map((dynamic j) => 'val ${j.name}: ${j['type'].kotlin}')
+            .map((dynamic j) =>
+                'val ${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}')
             .join(', ');
         final parameters = map.isEmpty ? 'null' : 'hashMapOf($map)';
         var comments =
@@ -77,7 +79,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final vals = method['arguments']
             .listValue
             .map((dynamic j) =>
-                'val ${j.name} = args["${j.name}"] as? ${j["type"].kotlin}' +
+                'val ${j.name} = args["${j.name}"] as? ${replaceDartToKotlin(j["type"].stringValue)}' +
                 (j.isRequired
                     ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
                     : ''))

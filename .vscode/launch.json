@@ -39,12 +39,8 @@
       "program": "bin/faraday.dart",
       "args": [
         "generate",
-        "--android-common",
-        "/Users/gix/Documents/yxr/androidtob/app/src/main/java/faraday/bridge/FaradayCommon.kt",
-        "--ios-common",
-        "/Users/gix/Documents/yxr/iosb4reborn/YuxiaorReborn/Faraday/FaradayCommon.swift",
         "--file",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/ui.dart"
+        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/purchase/pages/purchase_replenish.dart"
       ],
       "type": "dart"
     },
