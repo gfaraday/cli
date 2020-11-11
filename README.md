@@ -5,8 +5,9 @@
 ## Features
 
 - [x] Generate Common&Entry interface
-- [x] AutoComplete Common&Entry method
 - [x] Package iOS&Android framework/aar
+
+## Why
 
 ### 桥接方法
 
@@ -33,7 +34,7 @@ class EncryptUtils {
 
 ``` swift
 
-func handle(_ name: String, _ arguments: Any?, _ completion: @escaping (_ result: Any?) -> Void) -> Void { 
+func handle(_ name: String, _ arguments: Any?, _ completion: @escaping (_ result: Any?) -> Void) -> Void {
     if (name == "SomeFeature#encrypt") {
         guard let content = args?["content"] as? String else {
                 fatalError("Invalid argument: content")
@@ -58,6 +59,175 @@ func handle(_ name: String, _ arguments: Any?, _ completion: @escaping (_ result
 
 ### 路由注册
 
+flutter中一个典型的路由注册如下
+
+```dart
+// flutter
+Map<String, RouteFactory> routes = {
+    'first_page': (RouteSettings settings) => CupertinoPageRoute(
+        builder: (context) => FirstPage(0), settings: settings),
+    'home': (RouteSettings settings) => CupertinoPageRoute(
+        builder: (context) => HomePage(settings.arguments), settings: settings),
+    'flutter_tab_2': (RouteSettings settings) => CupertinoPageRoute(
+        builder: (context) => HomePage(settings.arguments), settings: settings),
+    'flutter_tab_1': (RouteSettings settings) => CupertinoPageRoute(
+        builder: (context) => EmbeddingPage(0), settings: settings),
+  };
+```
+
+``` swift
+
+// swift
+
+enum FaradayRoute {
+    // ---> enum
+    // ---> enum MainTabPage
+    case first_page
+    case home(Int id)
+    case flutter_tab_2(String name)
+    case flutter_tab_1
+}
+```
+
+上面的例子可以看出我们在3端需要定义很多`常量字符串`,如果任由开发者手动输入，ide没有任何提醒，那会非常容易出错。(具体命令下述会有相关示例)
+
 ### 打包集成
 
-## 快速开始
+#### ios
+
+[官方集成方案](https://flutter.dev/docs/development/add-to-app/ios/project-setup)一共有3种，其中2中需要ios开发者本地由flutter开发环境，还有一种需要获取被人打包好的framework。这种开发体验对一个稍具规模的ios开发团队来说并不是特别友好。我们将采用 `pod 私有库`的方式在团队成员之间共享打包产物。同时对CI/CD流程提供支持
+
+#### android
+
+[android 官方方案](https://flutter.dev/docs/development/add-to-app/android/project-setup)对比ios来说，使用aar方式集成非常友好，只需要将编译产物放到大家都可以访问到的地址即可
+
+## How
+
+### 前置准备条件
+
+- 安装`faraday cli`
+
+``` shell
+
+pub global active faraday
+
+# print version
+faraday version
+
+```
+
+- 准备文件服务器
+
+为了无感集成flutter模块至现有的ios和android工程，需要一个所有团队成员均可访问的文件服务器(支持文件上传下载)来存储编译产物(`ios`为`cocoapods framework`，`android` 为`maven`仓库)
+> 如果暂时没有文件服务器可以下载 [simple-http-server.py](tools/http-server/simple-http-server.py)启动一个用于测试的文件服务器。需要安装`python3`
+
+- cocoapods private spec
+
+ios选择使用`cocoapods`来集成，为了让native开的同学无感我们需要创建私有`repo`。
+具体步骤参见 [Private Pods](https://guides.cocoapods.org/making/private-cocoapods.html)
+
+### 配置文件
+
+- `flutter module`项目根目录下创建`.faraday.json`文件
+
+`cli`主要作用就是为ios和android生成模版代码，所以在一切工作开始之前我们需先告诉`cli`相应文件的具体位置。
+
+> 版本控制工具请忽略此文件
+
+- `ios native`项目中添加2个空文件
+
+> 新建2个空文件用来生成 桥接方法和路由 的模版代码，建议文件名 FaradayCommon.swift、FaradayRoute.swift
+
+- `android native`项目中添加2个空文件
+
+> 建议文件名 FaradayCommon.kt、FaradayRoute.kt
+
+- `pubspec.yaml`
+
+修改`flutter module`项目下的`pubspec.yaml`文件， 添加以下配置
+
+``` yaml
+
+...
+
+version: 0.2.1-dev.0
+
+####################################################
+faraday:
+  static_file_server_address: "http://localhost:8000" # 前置条件中的静态文件服务器
+  pod_repo_name: "faraday" # 前置条件中的 private pod spec name
+####################################################
+
+environment:
+  sdk: ">=2.9.0 <3.0.0"
+
+...
+
+```
+
+### 初始化
+
+``` shell
+
+cd [your_flutter_module]
+
+faraday init
+
+```
+
+初始化完成以后查看`lib/src/debug`目录
+
+![debug_folder](images/debug_folder.png)
+
+同时在`lib/src/`目录下会生成`routes.dart`文件，用来定义flutter侧的路由定义。如果一切正常说明初始化正常
+
+### 集成
+
+初始化完成以后，我们分别在3端来集成faraday
+
+#### flutter
+
+``` dart
+import 'src/debug/debug.dart';
+import 'src/routes.dart';
+
+....
+
+// debugMessage 每次打包都会更新称最新版本号，可以添加一个banner显示
+debugPrint(debugMessage);
+
+// 可以使用 CupertinoApp、MaterialApp、WidgetsApp 或者 Navigator 均可
+CupertinoApp(onGenerateRoute: (_) => faraday.wrapper(routeFactory));
+
+```
+
+iOS端产物说明
+
+- `protocol FaradayCommonHandler { }`
+
+> 自动根据flutter端的common方法定义来生成接口定义，我们需要实现他，一般可以直接用 AppDelegate 实现
+>
+> ``` swift
+> extension AppDelegate: FaradayCommonHandler {
+> ...
+> }
+> ```
+
+- `enum FaradayRoute { }`
+
+> 根据flutter端的路由信息来生成对应的枚举 使用方式 大概如下
+>
+> ``` swift
+> let vc = FaradayRoute.demoPage.viewController()
+> navigationController?.push(viewController: vc)
+> ...
+> }
+> ```
+
+android和iOS类似这里就不在赘述
+
+### 添加一个桥接方法
+
+`g_faraday`提供了2个注解`@common`和`@ignore`。当一个类被`@common`注解时，这个类中所包含的所有符合条件的方法都会在`native`侧生成相应的
+
+### 添加一个路由
