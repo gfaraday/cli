@@ -128,19 +128,30 @@ ios选择使用`cocoapods`来集成，为了让native开的同学无感我们需
 
 ### 配置文件
 
-- `flutter module`项目根目录下创建`.faraday.json`文件
-
-`cli`主要作用就是为ios和android生成模版代码，所以在一切工作开始之前我们需先告诉`cli`相应文件的具体位置。
-
-> 版本控制工具请忽略此文件
-
-- `ios native`项目中添加2个空文件
+- *ios native* 项目中添加2个空文件
 
 > 新建2个空文件用来生成 桥接方法和路由 的模版代码，建议文件名 FaradayCommon.swift、FaradayRoute.swift
 
-- `android native`项目中添加2个空文件
+- *android native* 项目中添加2个空文件
 
 > 建议文件名 FaradayCommon.kt、FaradayRoute.kt
+
+- *flutter module* 项目根目录下创建`.faraday.json`文件
+
+`cli`主要作用就是为ios和android生成模版代码，所以在一切工作开始之前我们需先告诉`cli`相应文件的具体位置。
+
+``` json
+{
+  "ios-common": "/path/to/FaradayCommon.swift", // 上面2步新建的文件路径
+  "ios-route": "/path/to/FaradayRoute.swift",
+  "android-common": "/path/to/FaradayCommon.kt",
+  "android-route": "/path/to/FaradayRoute.kt"
+}
+
+```
+
+> 版本控制工具请忽略此文件
+> 每个开发者的 `.faraday.json` 文件都需要根据自己的需要配置添加
 
 - `pubspec.yaml`
 
