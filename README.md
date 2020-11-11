@@ -228,6 +228,70 @@ android和iOS类似这里就不在赘述
 
 ### 添加一个桥接方法
 
-`g_faraday`提供了2个注解`@common`和`@ignore`。当一个类被`@common`注解时，这个类中所包含的所有符合条件的方法都会在`native`侧生成相应的
+`g_faraday`提供了2个注解`@common`和`@ignore`。当一个类被`@common`注解时，这个类中所包含的所有符合条件的方法都会在`native`侧生成相应的接口类
+
+> 何为符合条件的方法
+> 如果一个方法为 静态方法而且参数和返回值都可以序列化成json，那么就是一个符合条件的方法
+> 如果一个符合条件的方法，不需要生成native接口，那么只需要用`@ignore`注解此方法即可
+
+执行下面的命令，应该可以看到对应的文件生成了相应的方法
+
+``` shell
+
+cd [your_flutter_module]
+
+faraday generate
+
+```
 
 ### 添加一个路由
+
+当一个flutter页面需要从native打开是需要以下两步来操作
+
+- 用`@entry`注解你当前页面的class
+
+- 添加`faraday`静态方法
+
+``` dart
+
+// 声明路由
+
+@entry
+class DemoPage extends StatefulWidget {
+
+    static Route faraday(int id) => CupertinoPageRoute(
+        builder: (ctx) => DemoPage(status),
+      );
+
+    ....
+}
+
+```
+
+执行
+
+``` shell
+
+faraday generate
+
+```
+
+在对应的`route`文件和`routes.dart`文件中，会根据`faraday`方法的签名，自动生成对应路由
+
+> 如果有路由只需要生成`flutter`侧，不需要从native打开，那么可以考虑使用`@flutterEntry`进行注解
+
+### 打包发布
+
+faraday对`flutter build`命令进行封装，可以用以下命令快速打包发布
+
+``` shell
+
+faraday tag --no-release
+
+```
+
+## FAQ
+
+## LICENSE
+
+faraday_cli is released under the MIT license. [See LICENSE](LICENSE) for details.
