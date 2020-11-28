@@ -1,6 +1,7 @@
 library faraday;
 
 import 'package:faraday/src/utils/log.dart';
+import 'package:faraday/src/utils/version.g.dart';
 import 'package:logging/logging.dart';
 
 import 'src/runner/command_runner.dart';
@@ -18,7 +19,7 @@ void main(List<String> arguments) {
   Logger.root.level = verbose ? Level.ALL : Level.WARNING;
 
   if (arguments.length == 1 && arguments.first == '--version') {
-    print('1.2.3');
+    print(version);
     return;
   }
   FaradayCommandRunner().run(arguments).then((v) {
