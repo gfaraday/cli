@@ -10,8 +10,10 @@
     "fstat",
     "httpd",
     "inited",
+    "podfile",
     "posixpath",
     "recase",
-    "wfile"
+    "wfile",
+    "xcframework"
   ]
 }

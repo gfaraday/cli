@@ -192,8 +192,12 @@ For Android Developer:
       // 修改podfile
       final podfile = File(path.join(shell.workingDirectory, '.ios/Podfile'));
       final podfileContent = await podfile.readAsStringSync();
+
+      // 默认只支持10.0+
       await podfile
           .writeAsStringSync(podfileContent.replaceFirst('8.0', '10.0'));
+      await podfile
+          .writeAsStringSync(podfileContent.replaceFirst('9.0', '10.0'));
 
       log.fine('Build ios-framework $version');
       await shell.startAndReadAsString('flutter', [
@@ -282,7 +286,7 @@ ${_generateCocoapodsInstallTips()}
     return localVersion;
   }
 
-  // retrun FlutterPluginRegistrant latest version
+  // return FlutterPluginRegistrant latest version
   Future<String> processPlugins(String flutterDependency) async {
     final plugins = JSON
         .parse(File(path.join(project, '.flutter-plugins-dependencies'))
@@ -303,12 +307,10 @@ ${_generateCocoapodsInstallTips()}
     for (final plugin in plugins) {
       final pluginName = plugin['name'].stringValue;
       // 获取当前 pubspec version
-      final source = packages[pluginName]['source'];
       final lockVersion = packages[pluginName]['version'];
-      if (await publish(
-          pluginName, source != 'hosted' ? version : lockVersion)) {
-        hasNewPlugin = true;
-      }
+
+      hasNewPlugin = await publish(pluginName, lockVersion);
+
       // add plugins dependency
       final podspec =
           path.join(plugin['path'].stringValue, 'ios', '$pluginName.podspec');
