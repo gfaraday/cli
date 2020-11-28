@@ -1,5 +1,8 @@
 # Faraday_CLI
 
+![Publisher](https://github.com/gfaraday/cli/workflows/Publisher/badge.svg?branch=master)
+![version](https://img.shields.io/pub/v/faraday?include_prereleases)
+
 `faraday_cli`(以下简称`cli`)是配合[g_faraday](https://github.com/gfaraday/g_faraday)进行模块化混合应用开发的命令行程序,帮助我们减少部分重复性工作让开发更高效
 
 ## Features
