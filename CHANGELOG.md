@@ -1,4 +1,8 @@
-# 1.2.3
+# 1.2.4
+
+* change mini deploy target to 10.0
+
+## 1.2.3
 
 * fix typo
 
