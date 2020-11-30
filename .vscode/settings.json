@@ -10,6 +10,7 @@
     "fstat",
     "httpd",
     "inited",
+    "negatable",
     "podfile",
     "posixpath",
     "recase",

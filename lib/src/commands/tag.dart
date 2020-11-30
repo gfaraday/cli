@@ -21,11 +21,12 @@ class Pod {
 }
 
 final dependencyPods = <Pod>[];
-final _3rddependencyPods = <String>[];
+final _3rdDependencyPods = <String>[];
 
 class TagCommand extends FaradayCommand {
   TagCommand() : super() {
     argParser.addOption('project');
+    argParser.addOption('flutter');
     argParser.addFlag('release', negatable: true, defaultsTo: false);
     argParser.addOption('version', abbr: 'v', help: '版本号例如: 1.2.3');
     argParser.addOption('static-file-server-address',
@@ -72,6 +73,8 @@ class TagCommand extends FaradayCommand {
   Future run() async {
     _platforms = stringsArg('platforms');
     _project = stringArg('project') ?? path.current;
+
+    final flutter = stringArg('flutter') ?? 'flutter';
 
     // 确定存在
     final pubspecFile = File(path.join(project, 'pubspec.yaml'));
@@ -133,15 +136,15 @@ class TagCommand extends FaradayCommand {
     await debugFile.writeAsString(d_debug(version), mode: FileMode.write);
 
     log.fine('Clean workspace...');
-    log.config(await shell.startAndReadAsString('flutter', ['clean']));
+    log.config(await shell.startAndReadAsString(flutter, ['clean']));
 
-    log.config(await shell.startAndReadAsString('flutter', ['pub', 'get']));
+    log.config(await shell.startAndReadAsString(flutter, ['pub', 'get']));
 
     var guide = '';
 
     if (platforms.contains('android')) {
       log.fine('Build android aar $version...');
-      await shell.startAndReadAsString('flutter', [
+      await shell.startAndReadAsString(flutter, [
         'build',
         'aar',
         '--build-number',
@@ -200,7 +203,7 @@ For Android Developer:
           .writeAsStringSync(podfileContent.replaceFirst('9.0', '10.0'));
 
       log.fine('Build ios-framework $version');
-      await shell.startAndReadAsString('flutter', [
+      await shell.startAndReadAsString(flutter, [
         'build',
         'ios-framework',
         '--no-pub',
@@ -321,7 +324,7 @@ ${_generateCocoapodsInstallTips()}
             !l.contains('Flutter'));
         if (dependencies.isNotEmpty) {
           for (final dependency in dependencies) {
-            _3rddependencyPods
+            _3rdDependencyPods
                 .add(dependency.trim().replaceAll('s.dependency', 'pod'));
           }
         }
@@ -519,7 +522,7 @@ ${_generateCocoapodsInstallTips()}
         .join('\n  ');
 
     return '''def install_faraday_pods(release_configurations = ['Release'], debug_configurations = ['Debug'])
-  ${_3rddependencyPods.join('\n  ')}
+  ${_3rdDependencyPods.join('\n  ')}
   ...
   $pods
   ...
