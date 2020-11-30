@@ -1,4 +1,8 @@
-# 1.2.4
+# 1.2.5
+
+* support custom flutter version
+
+## 1.2.4
 
 * change mini deploy target to 10.0
 
