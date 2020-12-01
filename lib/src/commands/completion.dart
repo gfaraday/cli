@@ -50,7 +50,7 @@ class CompletionCommand extends FaradayCommand {
         }
       }
       throw ToolExit(
-          'Invlid source code with offset. $sourceCode \noffset:$offset');
+          'Invalid source code with offset. $sourceCode \noffset:$offset');
     }
 
     final r = parseCode();
