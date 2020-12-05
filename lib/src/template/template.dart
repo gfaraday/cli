@@ -42,16 +42,6 @@ $_header
 sealed class FlutterRoute(val routeName: String, val routeArguments: HashMap<String, Any>? = null) {
 // ---> sealed
 }
-
-/**
- * Navigate to flutter
- * @param route flutter router
- *
- * override [Activity.onActivityResult] in your Activity to got the result
- */
-fun Activity.openFlutter(route: FlutterRoute, requestCode: Int) {
-    startActivityForResult(FaradayActivity.build(this, route.routeName, route.routeArguments), requestCode)
-}
 ''';
 
 // String k_net = '''import io.flutter.plugin.common.MethodCall
