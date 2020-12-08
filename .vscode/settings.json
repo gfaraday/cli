@@ -9,6 +9,7 @@
     "fileno",
     "fstat",
     "httpd",
+    "impls",
     "inited",
     "negatable",
     "podfile",
@@ -16,6 +17,7 @@
     "posixpath",
     "r'Flutter",
     "recase",
+    "sealeds",
     "sublist",
     "wfile",
     "xcframework"

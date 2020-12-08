@@ -24,7 +24,7 @@ class CompletionCommand extends FaradayCommand {
     final offsetS = stringArg('offset');
     if (offsetS == null || offsetS.isEmpty) return '';
 
-    final offset = num.parse(offsetS, (_) => -1).toInt();
+    final offset = num.tryParse(offsetS) ?? -1;
     if (offset <= 0) return '';
 
     final sourceCode =
@@ -64,7 +64,16 @@ class CompletionCommand extends FaradayCommand {
     final arguments = method.arguments.isNotEmpty
         ? ", {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
         : '';
-    return "FaradayCommon.invokeMethod('${pr.className}#${method.name}'$arguments)";
+    final rt = method.returnType.toString();
+    final arg = "('${pr.className}#${method.name}'$arguments)";
+
+    if (rt.contains('List')) {
+      return 'FaradayCommon.invokeListMethod$arg';
+    } else if (rt.contains('Map')) {
+      return 'FaradayCommon.invokeMapMethod$arg';
+    }
+
+    return 'FaradayCommon.invokeMethod$arg';
   }
 }
 
