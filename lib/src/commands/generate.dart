@@ -53,13 +53,18 @@ class GenerateCommand extends FaradayCommand {
 
     log.info('project root' + projectRoot);
 
-    for (final item
-        in Directory(pwd.contains('lib') ? pwd : path.join(projectRoot, 'lib'))
-            .listSync(followLinks: false, recursive: true)) {
-      if (item is File && item.path.endsWith('.dart')) {
-        process(item.readAsStringSync(), projectRoot,
-            item.path.split('lib/').last, outputs(projectRoot));
-      }
+    final items =
+        Directory(pwd.contains('lib') ? pwd : path.join(projectRoot, 'lib'))
+            .listSync(followLinks: false, recursive: true)
+            .where((f) => f is File && f.path.endsWith('.dart'))
+            .map((e) => e as File);
+
+    final files = items.toList(growable: false);
+    files.sort((fl, fr) => fl.path.compareTo(fr.path));
+
+    for (final item in files) {
+      process(item.readAsStringSync(), projectRoot,
+          item.path.split('lib/').last, outputs(projectRoot));
     }
 
     return 'generated common(s)&route(s) for $projectRoot';
