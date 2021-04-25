@@ -81,6 +81,8 @@ void process(String sourceCode, String projectRoot, String identifier,
   }
 
   final prs = parse(sourceCode: sourceCode);
+  // 排序
+  prs.sort((l, r) => l.className.compareTo(r.className));
 
   final routes = prs.where((p) => p.entry != null);
   if (routes.length != Set.from(routes.map((r) => r.className)).length) {
