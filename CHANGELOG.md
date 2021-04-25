@@ -1,4 +1,8 @@
-# 1.2.5
+# 1.2.7
+
+* sort parse result
+  
+## 1.2.5
 
 * support custom flutter version
 
