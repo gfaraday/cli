@@ -35,14 +35,14 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.4.2"
+    version: "2.6.1"
   charcode:
     dependency: transitive
     description:
       name: charcode
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.3"
+    version: "1.2.0"
   cli_util:
     dependency: transitive
     description:
@@ -56,7 +56,7 @@ packages:
       name: collection
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.14.13"
+    version: "1.15.0"
   convert:
     dependency: transitive
     description:
@@ -91,7 +91,7 @@ packages:
       name: g_json
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.0"
   glob:
     dependency: transitive
     description:
@@ -119,7 +119,7 @@ packages:
       name: js
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.6.2"
+    version: "0.6.3"
   logging:
     dependency: "direct main"
     description:
@@ -133,7 +133,7 @@ packages:
       name: meta
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.2.4"
+    version: "1.3.0"
   node_interop:
     dependency: transitive
     description:
@@ -161,14 +161,14 @@ packages:
       name: path
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.7.0"
+    version: "1.8.0"
   pedantic:
     dependency: "direct dev"
     description:
       name: pedantic
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.9.2"
+    version: "1.11.0"
   platform:
     dependency: transitive
     description:
@@ -210,28 +210,28 @@ packages:
       name: source_span
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.7.0"
+    version: "1.8.1"
   string_scanner:
     dependency: transitive
     description:
       name: string_scanner
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.5"
+    version: "1.1.0"
   term_glyph:
     dependency: transitive
     description:
       name: term_glyph
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   typed_data:
     dependency: transitive
     description:
       name: typed_data
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.0"
   watcher:
     dependency: transitive
     description:
@@ -247,4 +247,4 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.9.0 <3.0.0"
+  dart: ">=2.12.0 <3.0.0"
