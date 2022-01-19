@@ -144,7 +144,7 @@ String d_route() {
 import 'package:g_faraday/g_faraday.dart';
 
 Route<dynamic> routeFactory(RouteSettings settings) {
-  final dynamic args = settings.toJson;
+  final JSON args = settings.toJson;
 
   switch (settings.name) {
     // ---> route

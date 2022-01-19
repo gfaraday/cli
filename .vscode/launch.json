@@ -41,7 +41,7 @@
       "args": [
         "generate",
         "--file",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/purchase/pages/purchase_replenish.dart"
+        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/purchase/purchase.dart"
       ],
       "type": "dart"
     },
