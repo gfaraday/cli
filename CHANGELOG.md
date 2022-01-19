@@ -1,4 +1,9 @@
-# 1.2.7
+# 1.2.8
+
+* sort source file
+* update dart template
+  
+## 1.2.7
 
 * sort parse result
   
@@ -49,7 +54,7 @@
 
 * fix typo
 
-# 1.1.4
+## 1.1.4
 
 * fix typo
 
