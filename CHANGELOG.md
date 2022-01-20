@@ -1,4 +1,8 @@
-# 2.0.1
+# 2.0.2
+
+* support dart generator Map<String, dynamic> and Map<String, dynamic>?
+
+## 2.0.1
 
 * fix code error
 
