@@ -27,15 +27,17 @@ extension ArgumentsJSON on JSON {
   String arg() {
     final t = this['type'].stringValue;
     final isRequired = this['isRequired'].booleanValue;
-    final realType = t == 'int'
-        ? (isRequired ? 'integer' : 'integerValue')
-        : t == 'bool'
-            ? (isRequired ? 'boolean' : 'booleanValue')
-            : t == 'double'
-                ? (isRequired ? 'ddouble' : 'ddoubleValue')
-                : t == 'string'
-                    ? (isRequired ? 'string' : 'stringValue')
-                    : 'unsupported $t';
-    return 'arg["${this["name"].stringValue}"].$realType';
+    final realType = t.startsWith('int')
+        ? (isRequired ? 'integerValue' : 'integer')
+        : t.startsWith('bool')
+            ? (isRequired ? 'booleanValue' : 'boolean')
+            : t.startsWith('double')
+                ? (isRequired ? 'ddoubleValue' : 'ddouble')
+                : t.startsWith('String')
+                    ? (isRequired ? 'stringValue' : 'string')
+                    : t.startsWith('num')
+                        ? (isRequired ? 'numberValue' : 'number')
+                        : 'unsupported $t';
+    return 'args["${this["name"].stringValue}"].$realType';
   }
 }
