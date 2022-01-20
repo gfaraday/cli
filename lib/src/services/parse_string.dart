@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:faraday/src/utils/exception.dart';
+
+import '../utils/exception.dart';
 
 const supportedAnnotations = ['common', 'flutterEntry', 'entry'];
 
@@ -26,27 +27,28 @@ bool isSupportedType(String type) {
 class ParseResult {
   final String className;
   bool needGenerateNativeRoute;
-  MethodDeclaration entry;
-  List<MethodDeclaration> commons;
+  MethodDeclaration? entry;
+  List<MethodDeclaration>? commons;
 
   ParseResult(
     this.className, {
-    this.needGenerateNativeRoute,
+    this.needGenerateNativeRoute = false,
     this.commons,
+    this.entry,
   });
 }
 
-List<ParseResult> parse({String sourceCode, int offset}) {
+List<ParseResult> parse({required String sourceCode, int? offset}) {
   final prs = <ParseResult>[];
 
   final unit = parseString(content: sourceCode).unit;
 
   for (final declaration in unit.declarations) {
     if (declaration is ClassDeclaration) {
-      final clazzName = declaration.name.name;
+      final className = declaration.name.name;
       final annotations = declaration.metadata.map((e) => e.name.name);
 
-      final pr = ParseResult(clazzName);
+      final pr = ParseResult(className);
 
       for (final annotation in annotations) {
         switch (annotation) {
@@ -57,10 +59,11 @@ List<ParseResult> parse({String sourceCode, int offset}) {
                 .where((method) =>
                     method.isStatic &&
                     method.name.name == 'faraday' &&
-                    method.returnType.toSource().startsWith('Route'));
+                    method.returnType != null &&
+                    method.returnType!.toSource().startsWith('Route'));
             pr.needGenerateNativeRoute = annotation == 'entry';
             if (methods.isEmpty) {
-              throwToolExit('$clazzName route function not found');
+              throwToolExit('$className route function not found');
             }
             pr.entry = methods.first;
 
@@ -90,8 +93,9 @@ List<ParseResult> parse({String sourceCode, int offset}) {
                 }
 
                 // 必须是可以序列化成json的返回值
-                final returnTypeSource = method.returnType.toSource();
-                if (!isSupportedType(returnTypeSource)) {
+                final returnTypeSource = method.returnType?.toSource();
+                if (returnTypeSource != null &&
+                    !isSupportedType(returnTypeSource)) {
                   if (method.name.name != 'faraday') {
                     print(
                         '${method.name} return type [$returnTypeSource] not support.');
@@ -102,7 +106,8 @@ List<ParseResult> parse({String sourceCode, int offset}) {
                 // 必须是可以序列化成json的参数
                 final parameters = method.arguments;
 
-                if (parameters.any((p) => !isSupportedType(p.type))) {
+                if (parameters != null &&
+                    parameters.any((p) => !isSupportedType(p.type))) {
                   print('${method.name} parameter [$parameters] not support.');
                   continue;
                 }
@@ -119,7 +124,7 @@ List<ParseResult> parse({String sourceCode, int offset}) {
             break;
         }
       }
-      if (pr.entry != null || (pr.commons != null && pr.commons.isNotEmpty)) {
+      if (pr.entry != null || (pr.commons != null && pr.commons!.isNotEmpty)) {
         prs.add(pr);
       }
     }
@@ -129,7 +134,7 @@ List<ParseResult> parse({String sourceCode, int offset}) {
 
 class Parameter {
   final bool isRequired;
-  final String name;
+  final String? name;
   final String type;
   final bool isSimple;
 
@@ -138,7 +143,7 @@ class Parameter {
   factory Parameter.from(FormalParameter p, {bool isSimple = true}) {
     if (p is SimpleFormalParameter) {
       return Parameter(
-          p.identifier.name,
+          p.identifier?.name,
           p.type.toString(),
           p.isRequired ||
               p.metadata.indexWhere((a) => a.name.name == 'required') != -1,
@@ -165,7 +170,7 @@ class Parameter {
     //     return Parameter(name, type, p.isRequired, iss);
     //   }
     // }
-    throw 'Unsupport parameter: $p';
+    throw 'Nonsupport parameter: $p';
   }
 
   Map<String, dynamic> get info => {
@@ -183,26 +188,26 @@ class Parameter {
 }
 
 extension FaradayAnnotatedNode on AnnotatedNode {
-  String get comments =>
-      documentationComment?.childEntities?.map((s) => s.toString())?.join('\n');
+  String? get comments =>
+      documentationComment?.childEntities.map((s) => s.toString()).join('\n');
 }
 
 extension FaradayMethodDeclaration on MethodDeclaration {
   String get funcName => name.name;
 
-  List<Parameter> get arguments =>
-      parameters.parameters.map((p) => Parameter.from(p)).toList();
+  List<Parameter>? get arguments =>
+      parameters?.parameters.map((p) => Parameter.from(p)).toList();
 
   Map<String, dynamic> get info => {
         'comments': comments,
         'name': funcName,
-        'arguments': arguments.map((arg) => arg.info).toList(),
+        'arguments': arguments?.map((arg) => arg.info).toList(),
         'return': returnType.toString()
       };
 }
 
 extension FaradayConstructorDeclaration on ConstructorDeclaration {
-  String get funcName => name?.name;
+  String? get funcName => name?.name;
 
   List<Parameter> get arguments =>
       parameters.parameters.map((p) => Parameter.from(p)).toList();

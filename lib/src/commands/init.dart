@@ -58,16 +58,16 @@ class InitCommand extends FaradayCommand {
     final configPath = path.join(projectPath, '.faraday.json');
     final config = JSON.parse(File(configPath).readAsStringSync());
 
-    final ios_common = config['ios-common'].string;
-    final ios_route = config['ios-route'].string;
-    final android_common = config['android-common'].string;
-    final android_route = config['android-route'].string;
+    final iosCommon = config['ios-common'].string;
+    final iosRoute = config['ios-route'].string;
+    final androidCommon = config['android-common'].string;
+    final androidRoute = config['android-route'].string;
 
     final outputs = <String, String>{
-      if (ios_common != null) ios_common: t.s_common,
-      if (ios_route != null) ios_route: t.s_route,
-      if (android_common != null) android_common: t.k_common,
-      if (android_route != null) android_route: t.k_route,
+      if (iosCommon != null) iosCommon: t.s_common,
+      if (iosRoute != null) iosRoute: t.s_route,
+      if (androidCommon != null) androidCommon: t.k_common,
+      if (androidRoute != null) androidRoute: t.k_route,
     };
 
     if (outputs.isNotEmpty) {

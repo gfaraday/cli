@@ -4,7 +4,7 @@ import 'package:recase/recase.dart';
 enum SwiftCodeType { protocol, enmu, impl, enumPage }
 
 List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
-    {String identifier}) {
+    {String? identifier}) {
   final result = <String>[];
   for (final method in methods) {
     final name = method['name'].stringValue;

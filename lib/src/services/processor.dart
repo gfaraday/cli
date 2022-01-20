@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:faraday/src/services/dart_generator.dart';
 import 'package:g_json/g_json.dart';
 import 'package:recase/recase.dart';
 
 import '../utils/exception.dart';
+import 'dart_generator.dart';
 import 'kotlin_generator.dart';
 import 'parse_string.dart';
 import 'swift_generator.dart';
@@ -14,18 +13,17 @@ import 'swift_generator.dart';
 void process(String sourceCode, String projectRoot, String identifier,
     Map<String, String> outputs) {
   void _flushSwift(String clazz,
-      {List<JSON> commonMethods, List<JSON> routeMethods}) {
+      {List<JSON>? commonMethods, List<JSON>? routeMethods}) {
     final swiftCommonFile = outputs['ios-common'];
     if (swiftCommonFile != null && commonMethods != null) {
       // protocol
-      final protocols = generateSwift(
-          commonMethods ?? [], SwiftCodeType.protocol,
+      final protocols = generateSwift(commonMethods, SwiftCodeType.protocol,
           identifier: clazz);
       flush(protocols, 'protocol', clazz, swiftCommonFile);
 
       // impl
-      final impls = generateSwift(commonMethods ?? [], SwiftCodeType.impl,
-          identifier: clazz);
+      final impls =
+          generateSwift(commonMethods, SwiftCodeType.impl, identifier: clazz);
       flush(impls, 'impl', clazz, swiftCommonFile, indentation: '        ');
     }
 
@@ -43,7 +41,7 @@ void process(String sourceCode, String projectRoot, String identifier,
   }
 
   void _flushKotlin(String clazz,
-      {List<JSON> commonMethods, List<JSON> routeMethods}) {
+      {List<JSON>? commonMethods, List<JSON>? routeMethods}) {
     final kotlinCommonFile = outputs['android-common'];
     if (kotlinCommonFile != null) {
       final interface = generateKotlin(
@@ -70,7 +68,7 @@ void process(String sourceCode, String projectRoot, String identifier,
     if (dartRouteFile != null) {
       for (final r in results) {
         final contents = generateDart(
-          r.entry is MethodDeclaration ? JSON(r.entry.info) : null,
+          r.entry != null ? JSON(r.entry!.info) : null,
           identifier: r.className,
           flutterOnly: !r.needGenerateNativeRoute,
         );
@@ -93,10 +91,10 @@ void process(String sourceCode, String projectRoot, String identifier,
   // 处理 swift & kotlin
   for (final pr in prs) {
     final commons =
-        pr.commons?.map((e) => JSON(e.info))?.toList(growable: false) ?? [];
+        pr.commons?.map((e) => JSON(e.info)).toList(growable: false) ?? [];
     final routes = <JSON>[];
     if (pr.entry != null && pr.needGenerateNativeRoute) {
-      final info = JSON(pr.entry.info);
+      final info = JSON(pr.entry!.info);
       info['name'] = pr.className.camelCase;
       routes.add(info);
     }

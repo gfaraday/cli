@@ -10,6 +10,7 @@ String _header = '''//  Created by faraday_cli on ${DateTime.now()}.
 // GENERATED CODE BY FARADAY CLI - DO NOT MODIFY BY HAND
 ''';
 
+// ignore: non_constant_identifier_names
 String k_common = '''import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -34,6 +35,7 @@ interface Common: MethodChannel.MethodCallHandler {
 }
 ''';
 
+// ignore: non_constant_identifier_names
 String k_route = '''import android.app.Activity
 import com.yuxiaor.flutter.g_faraday.FaradayActivity
 
@@ -63,6 +65,7 @@ sealed class FlutterRoute(val routeName: String, val routeArguments: HashMap<Str
 
 // ''';
 
+// ignore: non_constant_identifier_names
 String s_route = '''import Foundation
 import g_faraday
 
@@ -77,13 +80,14 @@ enum FaradayRoute {
         }
     }
 
-    func viewController(callback: @escaping (Any?) -> () = { r in debugPrint("result don't be used \(String(describing: r))")}) -> FaradayFlutterViewController {
+    func viewController(callback: @escaping (Any?) -> () = { r in debugPrint("result don't be used \\(String(describing: r))")}) -> FaradayFlutterViewController {
         return FaradayFlutterViewController(page.name, arguments: page.arguments, callback: callback)
     }
 }
 
 ''';
 
+// ignore: non_constant_identifier_names
 String s_common = '''import Foundation
 
 $_header
@@ -131,6 +135,7 @@ extension FaradayCommonHandler {
 // }
 // ''';
 
+// ignore: non_constant_identifier_names
 String d_debug([String message = 'faraday']) {
   return '''
 $_header
@@ -139,6 +144,7 @@ const debugVersionMessage = '$message';
 ''';
 }
 
+// ignore: non_constant_identifier_names
 String d_route() {
   return '''import 'package:flutter/cupertino.dart';
 import 'package:g_faraday/g_faraday.dart';

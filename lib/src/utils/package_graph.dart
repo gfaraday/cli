@@ -62,7 +62,7 @@ class PackageGraph {
       if (uriString.endsWith('/')) {
         uriString = uriString.substring(0, uriString.length - 1);
       }
-      var uri;
+      late Uri uri;
       try {
         uri = Uri.parse(uriString);
       } on FormatException catch (_) {
@@ -78,13 +78,13 @@ class PackageGraph {
 
     /// Create all [PackageNode]s for all deps.
     var nodes = <String, PackageNode>{};
-    Map<String, dynamic> rootDeps;
+    Map<String, dynamic>? rootDeps;
     PackageNode addNodeAndDeps(YamlMap yaml, PackageDependencyType type,
         {bool isRoot = false}) {
       var name = yaml['name'];
       assert(!nodes.containsKey(name));
       var node =
-          PackageNode(name, yaml['version'], type, packageLocations[name]);
+          PackageNode(name, yaml['version'], type, packageLocations[name]!);
       nodes[name] = node;
 
       var deps = _depsFromYaml(yaml, isRoot: isRoot);
@@ -92,8 +92,8 @@ class PackageGraph {
       deps.forEach((name, source) {
         var dep = nodes[name];
         if (dep == null) {
-          var pubspec = _pubspecForUri(packageLocations[name]);
-          dep = addNodeAndDeps(pubspec, _dependencyType(rootDeps[name]));
+          var pubspec = _pubspecForUri(packageLocations[name]!);
+          dep = addNodeAndDeps(pubspec, _dependencyType(rootDeps?[name]));
         }
         node.dependencies.add(dep);
       });
@@ -111,7 +111,7 @@ class PackageGraph {
   factory PackageGraph.forThisPackage() => PackageGraph.forPath('.');
 
   /// Shorthand to get a package by name.
-  PackageNode operator [](String packageName) => allPackages[packageName];
+  PackageNode? operator [](String packageName) => allPackages[packageName];
 
   @override
   String toString() {

@@ -1,8 +1,8 @@
 import 'package:g_json/g_json.dart';
 import 'package:recase/recase.dart';
 
-List<String> generateDart(JSON method,
-    {String identifier, bool flutterOnly = true}) {
+List<String> generateDart(JSON? method,
+    {required String identifier, bool flutterOnly = true}) {
   final result = <String>[];
   if (flutterOnly) {
     result.add('    /// no native routed generated');
@@ -24,7 +24,7 @@ List<String> generateDart(JSON method,
 }
 
 extension ArgumentsJSON on JSON {
-  /// JSON ({"name":"isOpenXianyu","type":"bool","isRequired":false,"isSimple":false})
+  /// JSON ({"name":"isOpen","type":"bool","isRequired":false,"isSimple":false})
   /// 当参数是 {bool isOpen = false} 这种情况时， isRequired":false，但需要 booleanValue 因此用isRequired是不准确的。
   String arg() {
     // final t = this['type'].stringValue;

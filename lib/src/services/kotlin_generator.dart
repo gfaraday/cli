@@ -15,7 +15,7 @@ String replaceDartToKotlin(String source) {
 }
 
 List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
-    {String identifier}) {
+    {String? identifier}) {
   final result = <String>[];
   for (final method in methods) {
     final name = method['name'].stringValue;
@@ -32,7 +32,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
             .toList();
         final r = method['return'].stringValue;
 
-        String returnType;
+        late String returnType;
 
         if (r == 'null' || r == 'dynamic') {
           returnType = 'Any?';

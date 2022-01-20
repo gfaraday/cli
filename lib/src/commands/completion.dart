@@ -24,11 +24,12 @@ class CompletionCommand extends FaradayCommand {
     final offsetS = stringArg('offset');
     if (offsetS == null || offsetS.isEmpty) return '';
 
-    final offset = num.tryParse(offsetS) ?? -1;
+    final offset = int.tryParse(offsetS) ?? -1;
     if (offset <= 0) return '';
 
+    final sc = stringArg('source-code');
     final sourceCode =
-        Utf8Decoder().convert(base64Decode(stringArg('source-code')));
+        sc != null ? Utf8Decoder().convert(base64Decode(sc)) : '';
     if (sourceCode.isEmpty) return '';
 
     List<ParseResult> parseCode() {
@@ -58,11 +59,11 @@ class CompletionCommand extends FaradayCommand {
     if (r.isEmpty) return '';
 
     final pr = r.first;
-    if (pr == null || pr.commons.isEmpty) return '';
+    if (pr.commons == null || pr.commons!.isEmpty) return '';
 
-    final method = pr.commons.first;
-    final arguments = method.arguments.isNotEmpty
-        ? ", {${method.arguments.map((p) => p.dartStyle).join(', ')}}"
+    final method = pr.commons!.first;
+    final arguments = (method.arguments?.isNotEmpty ?? false)
+        ? ", {${method.arguments!.map((p) => p.dartStyle).join(', ')}}"
         : '';
     final rt = method.returnType.toString();
     final arg = "('${pr.className}#${method.name}'$arguments)";

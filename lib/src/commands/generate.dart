@@ -20,7 +20,7 @@ class GenerateCommand extends FaradayCommand {
 
   @override
   String run() {
-    String projectRoot;
+    late String projectRoot;
     final filePath = stringArg('file');
 
     if (filePath != null && filePath.contains('lib/')) {
@@ -28,7 +28,7 @@ class GenerateCommand extends FaradayCommand {
 
       log.info('project root ' + projectRoot);
 
-      final sourceCode = File(filePath).readAsStringSync() ?? '';
+      final sourceCode = File(filePath).readAsStringSync();
       log.info('source code length: ${sourceCode.length}');
 
       process(sourceCode, projectRoot, filePath.split('lib/').last,
@@ -44,7 +44,7 @@ class GenerateCommand extends FaradayCommand {
       projectRoot = pwd;
     } else {
       if (pwd.contains('lib')) {
-        final paths = filePath.split('lib');
+        final paths = pwd.split('lib');
         projectRoot = paths[paths.length - 2];
       } else {
         throwToolExit('必须在flutter module项目下执行，或者指定--file');
@@ -74,16 +74,16 @@ class GenerateCommand extends FaradayCommand {
     final configPath = path.join(root, '.faraday.json');
     final config = JSON.parse(File(configPath).readAsStringSync());
 
-    final ios_common = config['ios-common'].string;
-    final ios_route = config['ios-route'].string;
-    final android_common = config['android-common'].string;
-    final android_route = config['android-route'].string;
+    final iosCommon = config['ios-common'].string;
+    final iosRoute = config['ios-route'].string;
+    final androidCommon = config['android-common'].string;
+    final androidRoute = config['android-route'].string;
 
     return <String, String>{
-      if (ios_common != null) 'ios-common': ios_common,
-      if (ios_route != null) 'ios-route': ios_route,
-      if (android_common != null) 'android-common': android_common,
-      if (android_route != null) 'android-route': android_route,
+      if (iosCommon != null) 'ios-common': iosCommon,
+      if (iosRoute != null) 'ios-route': iosRoute,
+      if (androidCommon != null) 'android-common': androidCommon,
+      if (androidRoute != null) 'android-route': androidRoute,
       'dart-route': path.join(root, 'lib/src/routes.dart')
     };
   }
