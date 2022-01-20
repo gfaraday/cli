@@ -1,4 +1,8 @@
-# 2.0.2
+# 2.0.3
+
+* fix: null-safety code generate native method bug
+
+## 2.0.2
 
 * support dart generator Map<String, dynamic> and Map<String, dynamic>?
 
