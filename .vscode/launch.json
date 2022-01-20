@@ -55,6 +55,15 @@
         "../../example"
       ],
       "type": "dart"
+    },
+    {
+      "name": "faraday_cli upgrade",
+      "request": "launch",
+      "program": "bin/faraday.dart",
+      "args": [
+        "upgrade",
+      ],
+      "type": "dart"
     }
   ]
 }

@@ -7,7 +7,7 @@ import '../commands/upgrade.dart';
 
 class FaradayCommandRunner extends CommandRunner {
   FaradayCommandRunner() : super('faraday', 'g_faraday_scaffold cli.') {
-    argParser.addFlag('verbose', abbr: 'v', negatable: false);
+    argParser.addFlag('verbose', abbr: null, negatable: false);
     addCommand(GenerateCommand());
     addCommand(CompletionCommand());
     addCommand(UpgradeCommand());

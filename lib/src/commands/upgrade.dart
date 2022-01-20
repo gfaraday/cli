@@ -32,14 +32,16 @@ class UpgradeCommand extends FaradayCommand {
           runInShell: true);
     } else {
       log.config('Upgrade in Dart VM');
-      Process.runSync('pub', ['global', 'activate', 'faraday'],
+      final p = Process.runSync(
+          'dart', ['pub', 'global', 'activate', 'faraday'],
           runInShell: true);
+      log.severe(p.stdout);
     }
 
-    var process = Process.runSync('faraday', ['-v'],
+    final process = Process.runSync('faraday', ['--version'],
         runInShell: true, stdoutEncoding: utf8);
-    log.info(process.stdout);
+    // log.info(process.stdout);
 
-    return process.stdout;
+    return 'faraday current version: ${process.stdout}';
   }
 }

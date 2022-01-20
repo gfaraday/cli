@@ -16,7 +16,7 @@ void main(List<String> arguments) {
 
   // append logger
   Logger.root.onRecord.listen(recordAnsiLog);
-  Logger.root.level = verbose ? Level.ALL : Level.WARNING;
+  Logger.root.level = verbose ? Level.ALL : Level.CONFIG;
 
   if (arguments.length == 1 && arguments.first == '--version') {
     print(version);
