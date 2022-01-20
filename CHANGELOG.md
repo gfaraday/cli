@@ -1,4 +1,8 @@
-# 1.2.8
+# 1.2.9
+
+* refine dart code format
+  
+## 1.2.8
 
 * sort source file
 * update dart template
