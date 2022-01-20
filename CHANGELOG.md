@@ -1,4 +1,8 @@
-# 1.2.9
+## 1.3.0
+
+* refine dart code format
+  
+## 1.2.9
 
 * refine dart code format
   
