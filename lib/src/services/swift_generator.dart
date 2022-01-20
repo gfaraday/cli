@@ -9,11 +9,13 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
   for (final method in methods) {
     final name = method['name'].stringValue;
 
-    final args = method['arguments']
-        .listValue
-        .map((j) =>
-            "_ ${j['name'].stringValue}: ${j['type'].stringValue.replaceDartTypeToSwift}${j['isRequired'].booleanValue ? '' : '?'}")
-        .toList();
+    final args = method['arguments'].listValue.map((j) {
+      final n = j['name'].stringValue;
+      final t = j['type'].stringValue.replaceDartTypeToSwift;
+      // null-safety 参数自带？，不需要在根据isRequired 判断自己手动加？了
+      // final suffix = j['isRequired'].booleanValue ? '' : '?';
+      return "_ $n: $t";
+    }).toList();
 
     switch (type) {
       case SwiftCodeType.protocol:
@@ -32,7 +34,8 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
           } else if (realType.startsWith('List')) {
             returnType = '[Any]?';
           } else {
-            returnType = realType;
+            // 原生这边返回的类型是具体的类型，如：Int，flutter这边是Future<int?>
+            returnType = realType.replaceAll('?', '');
           }
         } else {
           returnType = '';

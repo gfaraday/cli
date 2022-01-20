@@ -28,7 +28,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
             .map((dynamic j) =>
-                '${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}${j.isRequired ? '' : '?'}')
+                '${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}') // ${j.isRequired ? '' : '?'}, flutter 现在自带？
             .toList();
         final r = method['return'].stringValue;
 
@@ -45,7 +45,8 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
           } else if (realType.startsWith('List')) {
             returnType = 'List<*>';
           } else {
-            returnType = realType;
+            // 原生这边返回的类型是具体的类型，如：Int，flutter这边是Future<int?>
+            returnType = realType.replaceAll('?', '');
           }
         }
 
