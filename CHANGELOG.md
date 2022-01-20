@@ -1,3 +1,7 @@
+# 2.0.0
+
+* support null-safety
+
 ## 1.3.0
 
 * refine dart code format
