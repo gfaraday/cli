@@ -82,7 +82,10 @@ extension ArgumentsJSON on JSON {
         return 'listValue.map((e) => e.stringValue).toList()';
       case 'List<String>?':
         return 'list?.map((e) => e.stringValue).toList()';
-
+      case 'Map<String, dynamic>':
+        return 'mapObject ?? {}';
+      case 'Map<String, dynamic>?':
+        return 'mapObject';
       default:
         return 'unsupported $t';
     }
