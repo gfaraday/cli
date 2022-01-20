@@ -51,8 +51,8 @@
       "program": "bin/faraday.dart",
       "args": [
         "init",
-        "--project-path",
-        "../../example"
+        "--project",
+        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn"
       ],
       "type": "dart"
     },
