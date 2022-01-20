@@ -7,13 +7,13 @@ abstract class FaradayCommand extends Command {
 
   /// Gets the parsed command-line option named [name] as `bool`.
   bool? boolArg(String name) =>
-      argResults == null ? null : argResults![name] as bool;
+      argResults?[name] == null ? null : argResults![name] as bool;
 
   /// Gets the parsed command-line option named [name] as `String`.
   String? stringArg(String name) =>
-      argResults == null ? null : argResults![name] as String;
+      argResults?[name] == null ? null : argResults![name] as String;
 
   /// Gets the parsed command-line option named [name] as `List<String>`.
   List<String>? stringsArg(String name) =>
-      argResults == null ? null : argResults![name] as List<String>;
+      argResults?[name] == null ? null : argResults![name] as List<String>;
 }
