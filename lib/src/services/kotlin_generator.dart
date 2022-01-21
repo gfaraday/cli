@@ -14,6 +14,12 @@ String replaceDartToKotlin(String source) {
       .replaceAll('null', 'Any?');
 }
 
+extension _JSONArguments on JSON {
+  String get name => this['name'].stringValue;
+  String get argumentType => replaceDartToKotlin(this['type'].stringValue);
+  bool get isRequired => !argumentType.contains('?');
+}
+
 List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
     {String? identifier}) {
   final result = <String>[];
@@ -27,7 +33,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
             (method['comments'].string?.replaceAll('\n', '\n    ') ?? '');
         if (comments.isNotEmpty) comments = '    ' + comments + '\n';
         final parameters = args
-            .map((dynamic j) =>
+            .map((j) =>
                 '${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}') // ${j.isRequired ? '' : '?'}, flutter 现在自带？
             .toList();
         final r = method['return'].stringValue;
@@ -79,7 +85,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
       case KotlinCodeType.impl:
         final vals = method['arguments']
             .listValue
-            .map((dynamic j) =>
+            .map((j) =>
                 'val ${j.name} = args["${j.name}"] as? ${replaceDartToKotlin(j["type"].stringValue)}' +
                 (j.isRequired
                     ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'

@@ -96,10 +96,11 @@ $lets
   return result;
 }
 
-extension JSONArguments on JSON {
+extension _JSONArguments on JSON {
   String get name => this['name'].stringValue;
   String get argumentType => this['type'].stringValue.replaceDartTypeToSwift;
-  bool get isRequired => this['isRequired'].booleanValue;
+  // bool get isRequired => this['isRequired'].booleanValue;
+  bool get isRequired => !argumentType.contains('?');
 
   String getter() {
     final let = 'let $name = args?["$name"] as? $argumentType';
