@@ -1,4 +1,7 @@
-# 2.0.5
+# 2.0.6
+
+* fix: generate android router error
+## 2.0.5
 
 * fix: null-safety generate native code option type error
 ## 2.0.4
