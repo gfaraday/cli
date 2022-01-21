@@ -1,4 +1,7 @@
-# 2.0.4
+# 2.0.5
+
+* fix: null-safety generate native code option type error
+## 2.0.4
 
 * fix: null-safety dart code generate native code bug
 ## 2.0.3
