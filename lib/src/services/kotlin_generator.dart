@@ -83,14 +83,13 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         }
         break;
       case KotlinCodeType.impl:
-        final vals = method['arguments']
-            .listValue
-            .map((j) =>
-                'val ${j.name} = args["${j.name}"] as? ${replaceDartToKotlin(j["type"].stringValue)}' +
-                (j.isRequired
-                    ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
-                    : ''))
-            .join('\n            ');
+        final vals = method['arguments'].listValue.map((j) {
+          final kotlinType = j.argumentType.replaceAll('?', '');
+          return 'val ${j.name} = args["${j.name}"] as? $kotlinType' +
+              (j.isRequired
+                  ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
+                  : '');
+        }).join('\n            ');
 
         var invokeStr =
             '$name(${method['arguments'].listValue.map((dynamic j) => j.name).join(', ')})';

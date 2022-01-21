@@ -103,7 +103,8 @@ extension _JSONArguments on JSON {
   bool get isRequired => !argumentType.contains('?');
 
   String getter() {
-    final let = 'let $name = args?["$name"] as? $argumentType';
+    final swiftType = argumentType.replaceAll('?', '');
+    final let = 'let $name = args?["$name"] as? $swiftType';
     if (isRequired) {
       if (argumentType == 'dynamic') {
         return '''
