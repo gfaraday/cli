@@ -1,4 +1,7 @@
-# 2.0.3
+# 2.0.4
+
+* fix: null-safety dart code generate native code bug
+## 2.0.3
 
 * fix: null-safety code generate native method bug
 
