@@ -64,6 +64,15 @@
         "upgrade",
       ],
       "type": "dart"
+    },
+    {
+      "name": "faraday_cli version",
+      "request": "launch",
+      "program": "bin/faraday.dart",
+      "args": [
+        "-v",
+      ],
+      "type": "dart"
     }
   ]
 }
