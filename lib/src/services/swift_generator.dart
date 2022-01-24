@@ -66,9 +66,12 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
           result.add('''            case .$name:
                 return ("${name.snakeCase}", nil)''');
         } else {
+          final hasOptionType =
+              arguments.any((e) => e['type'].stringValue.contains('?'));
+          final suffix = hasOptionType ? ' as [String: Any?]' : '';
           result.add(
               '''            case let .$name(${arguments.map((dynamic a) => a.name).join(', ')}):
-                return ("${name.snakeCase}", [${arguments.map((dynamic a) => '"${a.name}": ${a.name}').join(', ')}])''');
+                return ("${name.snakeCase}", [${arguments.map((dynamic a) => '"${a.name}": ${a.name}').join(', ')}]$suffix)''');
         }
         break;
       case SwiftCodeType.impl:
