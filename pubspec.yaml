@@ -15,8 +15,8 @@ dependencies:
   ansicolor: ^2.0.1
   args: ^2.3.0
   g_json: ^4.0.0
-  shell: ^2.0.0
-  dio: ^4.0.4
+  # shell: ^2.0.0
+  # dio: ^4.0.4
   recase: ^4.0.0
   analyzer: ^3.2.0
   yaml: ^3.1.0
