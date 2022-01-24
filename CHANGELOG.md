@@ -1,4 +1,9 @@
-# 2.0.6
+# 2.0.7
+
+* fix: swift Dictionary warning
+* support `faraday -v`、`faraday version`、 `faraday --version`
+
+## 2.0.6
 
 * fix: generate android router error
 ## 2.0.5
