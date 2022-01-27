@@ -308,7 +308,7 @@ faraday tag --no-release
 1. 如何选择faraday版本？
 >根据Module项目是否支持null-safety分为两种情况
 >
->1. 不支持null-safety, 请使用版本1.2.7
+>1. 不支持null-safety, 请使用版本1.2.7, 后续版本将不再维护非null-safety的项目
 >
 >2. 支持null-safety, 请使用版本2.0.7及以上版本，需要dart version 2.15.1及以上版本，该版本dart对应flutter版本为2.8.1
 
