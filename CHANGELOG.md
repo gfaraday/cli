@@ -1,4 +1,6 @@
-# 2.0.7
+# 2.0.8
+* check the Dart method contains the correct channel name
+## 2.0.7
 
 * fix: swift Dictionary warning
 * support `faraday -v`、`faraday version`、 `faraday --version`
