@@ -41,7 +41,9 @@
       "args": [
         "generate",
         "--file",
-        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn/lib/src/features/demo/demo.dart"
+        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn/lib/src/features/demo/demo.dart",
+        // "--project",
+        // "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn"
       ],
       "type": "dart"
     },

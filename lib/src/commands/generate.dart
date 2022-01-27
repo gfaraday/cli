@@ -10,6 +10,7 @@ import '../utils/exception.dart';
 class GenerateCommand extends FaradayCommand {
   GenerateCommand() : super() {
     argParser.addOption('file', abbr: 'f', help: '解析指定文件');
+    argParser.addOption('project', abbr: 'p', help: '解析指定工程目录');
   }
 
   @override
@@ -39,7 +40,11 @@ class GenerateCommand extends FaradayCommand {
 
     // 从当前目录开始查找 项目根目录
     //
-    final pwd = path.current;
+    final pwd = stringArg('project') ?? path.current;
+    if (pwd.isEmpty) {
+      throwToolExit('必须在flutter module项目下执行，或者指定--file');
+    }
+
     if (File(path.join(pwd, 'pubspec.yaml')).existsSync()) {
       projectRoot = pwd;
     } else {
