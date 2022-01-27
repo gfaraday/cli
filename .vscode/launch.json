@@ -12,7 +12,7 @@
       "args": [
         "tag",
         "--project",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn",
+        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn",
         "-v",
         "1.0.7+5",
         "--platforms",
@@ -41,7 +41,7 @@
       "args": [
         "generate",
         "--file",
-        "/Users/gix/Documents/yxr/gfraday/faraday_reborn/lib/src/features/purchase/purchase.dart"
+        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn/lib/src/features/demo/demo.dart"
       ],
       "type": "dart"
     },

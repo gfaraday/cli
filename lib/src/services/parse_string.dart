@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 
+import '../../faraday.dart';
 import '../utils/exception.dart';
 
 const supportedAnnotations = ['common', 'flutterEntry', 'entry'];
@@ -112,8 +113,18 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
                   continue;
                 }
 
-                // 如果这个method满足设定上述约定，那么认为他是一个`common`
-                commons.add(method);
+                final channelName = '${pr.className}#${method.name.toSource()}';
+                if (!method.body.toSource().contains(channelName)) {
+                  log.severe('''
+                  please fix this error: This method not contains channel name "$channelName", method:
+                  ============>
+                  ${method.toSource()}
+                  <============\n
+                  ''');
+                } else {
+                  // 如果这个method满足设定上述约定，那么认为他是一个`common`
+                  commons.add(method);
+                }
                 if (offset != null) break;
               }
             }
