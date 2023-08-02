@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/token.dart';
 
 import '../../faraday.dart';
 import '../utils/exception.dart';
@@ -113,7 +114,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
                   continue;
                 }
 
-                final channelName = '${pr.className}#${method.name.toSource()}';
+                final channelName = '${pr.className}#${method.name.toString()}';
                 if (!method.body.toSource().contains(channelName)) {
                   log.severe('''
                   please fix this error: This method not contains channel name "$channelName", method:
@@ -154,7 +155,7 @@ class Parameter {
   factory Parameter.from(FormalParameter p, {bool isSimple = true}) {
     if (p is SimpleFormalParameter) {
       return Parameter(
-          p.identifier?.name,
+          p.name?.name,
           p.type.toString(),
           p.isRequired ||
               p.metadata.indexWhere((a) => a.name.name == 'required') != -1,
@@ -228,4 +229,8 @@ extension FaradayConstructorDeclaration on ConstructorDeclaration {
         'name': funcName,
         'arguments': arguments.map((arg) => arg.info).toList(),
       };
+}
+
+extension Value on Token {
+  String get name => lexeme;
 }
