@@ -7,9 +7,9 @@ JSON? _config;
 
 JSON get config => _config ?? JSON.nil;
 void readConfig(String projectPath) {
-  final _configFile = File(p.join(projectPath, '.faraday.json'));
-  _config = _configFile.existsSync()
-      ? JSON.parse(_configFile.readAsStringSync())
+  final configFile = File(p.join(projectPath, '.faraday.json'));
+  _config = configFile.existsSync()
+      ? JSON.parse(configFile.readAsStringSync())
       : JSON.nil;
 }
 //

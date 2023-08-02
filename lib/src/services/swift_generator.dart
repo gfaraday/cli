@@ -46,10 +46,8 @@ List<String> generateSwift(List<JSON> methods, SwiftCodeType type,
               '_ completion: @escaping (_ result: ${returnType.replaceDartTypeToSwift}) -> Void');
         }
 
-        result.add('\n    ' +
-            (method['comments'].string?.replaceAll('\n', '\n    ') ??
-                '// NO COMMENTS') +
-            '\n    func $name(${args.join(', ')})');
+        result.add(
+            '\n    ${method['comments'].string?.replaceAll('\n', '\n    ') ?? '// NO COMMENTS'}\n    func $name(${args.join(', ')})');
         break;
       case SwiftCodeType.enmu:
         var r = "    case $name${args.isEmpty ? '' : "(${args.join(', ')})"}";

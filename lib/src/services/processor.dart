@@ -12,7 +12,7 @@ import 'swift_generator.dart';
 
 void process(String sourceCode, String projectRoot, String identifier,
     Map<String, String> outputs) {
-  void _flushSwift(String clazz,
+  void flushSwift(String clazz,
       {List<JSON>? commonMethods, List<JSON>? routeMethods}) {
     final swiftCommonFile = outputs['ios-common'];
     if (swiftCommonFile != null && commonMethods != null) {
@@ -40,7 +40,7 @@ void process(String sourceCode, String projectRoot, String identifier,
     }
   }
 
-  void _flushKotlin(String clazz,
+  void flushKotlin(String clazz,
       {List<JSON>? commonMethods, List<JSON>? routeMethods}) {
     final kotlinCommonFile = outputs['android-common'];
     if (kotlinCommonFile != null) {
@@ -63,7 +63,7 @@ void process(String sourceCode, String projectRoot, String identifier,
     }
   }
 
-  void _flushDart(List<ParseResult> results) {
+  void flushDart(List<ParseResult> results) {
     final dartRouteFile = outputs['dart-route'];
     if (dartRouteFile != null) {
       for (final r in results) {
@@ -86,7 +86,7 @@ void process(String sourceCode, String projectRoot, String identifier,
   }
 
   // 先生成 dart 路由
-  _flushDart(routes.toList(growable: false));
+  flushDart(routes.toList(growable: false));
 
   // 处理 swift & kotlin
   for (final pr in prs) {
@@ -98,9 +98,9 @@ void process(String sourceCode, String projectRoot, String identifier,
       info['name'] = pr.className.camelCase;
       routes.add(info);
     }
-    _flushSwift(pr.className,
+    flushSwift(pr.className,
         commonMethods: List.from(commons), routeMethods: routes);
-    _flushKotlin(pr.className,
+    flushKotlin(pr.className,
         commonMethods: List.from(commons), routeMethods: routes);
   }
 }

@@ -79,7 +79,7 @@ class InitCommand extends FaradayCommand {
             throwToolExit('Kotlin file must starts with `package `');
           }
           final package = ktfile.first;
-          c = package + '\n\n' + c;
+          c = '$package\n\n$c';
         }
         File(fp).writeAsStringSync(c, mode: FileMode.write);
       });

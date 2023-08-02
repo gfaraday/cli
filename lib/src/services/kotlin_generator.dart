@@ -31,7 +31,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
       case KotlinCodeType.interface:
         var comments =
             (method['comments'].string?.replaceAll('\n', '\n    ') ?? '');
-        if (comments.isNotEmpty) comments = '    ' + comments + '\n';
+        if (comments.isNotEmpty) comments = '    $comments\n';
         final parameters = args
             .map((j) =>
                 '${j.name}: ${replaceDartToKotlin(j['type'].stringValue)}') // ${j.isRequired ? '' : '?'}, flutter 现在自带？
@@ -61,7 +61,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
               .add('callback: (${replaceDartToKotlin(returnType)}) -> Unit');
         }
 
-        result.add(comments + "    fun $name(${parameters.join(', ')})");
+        result.add("$comments    fun $name(${parameters.join(', ')})");
         break;
       case KotlinCodeType.sealed:
         final map =
@@ -73,22 +73,19 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         final parameters = map.isEmpty ? 'null' : 'hashMapOf($map)';
         var comments =
             (method['comments'].string?.replaceAll('\n', '\n    ') ?? '');
-        if (comments.isNotEmpty) comments = '    ' + comments + '\n';
+        if (comments.isNotEmpty) comments = '    $comments\n';
         if (properties.isEmpty) {
-          result.add(comments +
-              '    object ${name.pascalCase}: FlutterRoute("${name.snakeCase}")');
+          result.add(
+              '$comments    object ${name.pascalCase}: FlutterRoute("${name.snakeCase}")');
         } else {
-          result.add(comments +
-              '    data class ${name.pascalCase}($properties): FlutterRoute("${name.snakeCase}", $parameters)');
+          result.add(
+              '$comments    data class ${name.pascalCase}($properties): FlutterRoute("${name.snakeCase}", $parameters)');
         }
         break;
       case KotlinCodeType.impl:
         final vals = method['arguments'].listValue.map((j) {
           final kotlinType = j.argumentType.replaceAll('?', '');
-          return 'val ${j.name} = args["${j.name}"] as? $kotlinType' +
-              (j.isRequired
-                  ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")'
-                  : '');
+          return 'val ${j.name} = args["${j.name}"] as? $kotlinType${j.isRequired ? ' ?: throw IllegalArgumentException("Invalid argument: ${j.name}")' : ''}';
         }).join('\n            ');
 
         var invokeStr =
@@ -106,7 +103,7 @@ List<String> generateKotlin(List<JSON> methods, KotlinCodeType type,
         }
 
         if (vals.isNotEmpty) {
-          invokeStr = vals + '\n            $invokeStr';
+          invokeStr = '$vals\n            $invokeStr';
         }
 
         result.add('''        if (call.method == "$identifier#$name") {

@@ -27,7 +27,7 @@ class GenerateCommand extends FaradayCommand {
     if (filePath != null && filePath.contains('lib/')) {
       projectRoot = filePath.split('lib/').first;
 
-      log.info('project root ' + projectRoot);
+      log.info('project root $projectRoot');
 
       final sourceCode = File(filePath).readAsStringSync();
       log.info('source code length: ${sourceCode.length}');
@@ -56,7 +56,7 @@ class GenerateCommand extends FaradayCommand {
       }
     }
 
-    log.info('project root' + projectRoot);
+    log.info('project root$projectRoot');
 
     final items =
         Directory(pwd.contains('lib') ? pwd : path.join(projectRoot, 'lib'))
