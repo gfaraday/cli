@@ -1,3 +1,6 @@
+# 3.0.0
+* support dart 3.0
+
 # 2.0.8
 * check the Dart method contains the correct channel name
 ## 2.0.7
