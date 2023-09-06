@@ -40,10 +40,10 @@
       "program": "bin/faraday.dart",
       "args": [
         "generate",
-        "--file",
-        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn/lib/src/features/demo/demo.dart",
-        // "--project",
-        // "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn"
+        // "--file",
+        // "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn/lib/src/features/demo/demo.dart",
+        "--project",
+        "/Users/run/Documents/yxr/faraday_reborn"
       ],
       "type": "dart"
     },
@@ -54,7 +54,7 @@
       "args": [
         "init",
         "--project",
-        "/Users/dev-yxr/yxr/faraday_workspace/faraday_reborn"
+        "/Users/run/Documents/yxr/faraday_reborn"
       ],
       "type": "dart"
     },

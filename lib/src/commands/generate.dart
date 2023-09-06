@@ -68,6 +68,7 @@ class GenerateCommand extends FaradayCommand {
     files.sort((fl, fr) => fl.path.compareTo(fr.path));
 
     for (final item in files) {
+      log.info(item.path);
       process(item.readAsStringSync(), projectRoot,
           item.path.split('lib/').last, outputs(projectRoot));
     }
