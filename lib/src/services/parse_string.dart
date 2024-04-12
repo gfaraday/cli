@@ -5,7 +5,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import '../../faraday.dart';
 import '../utils/exception.dart';
 
-const supportedAnnotations = ['common', 'flutterEntry', 'entry'];
+// const supportedAnnotations = ['common', 'flutterEntry', 'entry'];
 
 const supportedDartType = [
   'String',
@@ -99,7 +99,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
                 if (returnTypeSource != null &&
                     !isSupportedType(returnTypeSource)) {
                   if (method.name.name != 'faraday') {
-                    print(
+                    log.severe(
                         '${method.name} return type [$returnTypeSource] not support.');
                   }
                   continue;
@@ -110,7 +110,8 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
 
                 if (parameters != null &&
                     parameters.any((p) => !isSupportedType(p.type))) {
-                  print('${method.name} parameter [$parameters] not support.');
+                  log.severe(
+                      '${method.name} parameter [$parameters] not support.');
                   continue;
                 }
 
