@@ -1,3 +1,6 @@
+# 3.0.1 
+* refactor: More obvious error logs
+
 # 3.0.0
 * support dart 3.0
 
