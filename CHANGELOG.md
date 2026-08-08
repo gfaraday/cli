@@ -1,3 +1,9 @@
+# 3.1.0
+* upgrade dependencies (analyzer 6→12, lints 2→6, etc.)
+* adapt analyzer 12 API changes (`ClassDeclaration.name` → `namePart.typeName`, `members` → `body.members`)
+* fix: `toSource()` no longer includes comments, which broke the `@common` channel name check; use source slice instead
+* fix: remove redundant `library` directive and add missing type annotations (lints 6)
+
 # 3.0.1 
 * refactor: More obvious error logs
 
