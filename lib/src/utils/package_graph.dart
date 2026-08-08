@@ -155,13 +155,14 @@ class PackageNode {
 /// watched for changes.
 enum PackageDependencyType { pub, github, path, sdk }
 
-PackageDependencyType _dependencyType(source) {
+PackageDependencyType _dependencyType(Object? source) {
   if (source is String || source == null) return PackageDependencyType.pub;
 
   assert(source is YamlMap);
-  assert(source.keys.length == 1);
+  final yaml = source as YamlMap;
+  assert(yaml.keys.length == 1);
 
-  var typeString = source.keys.first;
+  var typeString = yaml.keys.first;
   switch (typeString) {
     case 'git':
       return PackageDependencyType.github;

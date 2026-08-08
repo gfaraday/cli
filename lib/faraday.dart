@@ -1,5 +1,3 @@
-library faraday;
-
 import 'package:faraday/src/utils/log.dart';
 import 'package:faraday/src/utils/version.g.dart';
 import 'package:logging/logging.dart';

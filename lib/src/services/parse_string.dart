@@ -47,7 +47,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
 
   for (final declaration in unit.declarations) {
     if (declaration is ClassDeclaration) {
-      final className = declaration.name.name;
+      final className = declaration.namePart.typeName.lexeme;
       final annotations = declaration.metadata.map((e) => e.name.name);
 
       final pr = ParseResult(className);
@@ -56,7 +56,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
         switch (annotation) {
           case 'entry':
           case 'flutterEntry':
-            final methods = declaration.members
+            final methods = declaration.body.members
                 .whereType<MethodDeclaration>()
                 .where((method) =>
                     method.isStatic &&
@@ -74,7 +74,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
             final commons = <MethodDeclaration>[];
             // 遍历处所有符合条件的method
             for (final method
-                in declaration.members.whereType<MethodDeclaration>()) {
+                in declaration.body.members.whereType<MethodDeclaration>()) {
               // 如果是想自动完成，那么这里需要判断，以免不必要的运算
               if (offset != null &&
                   (offset < method.offset || offset > method.end)) {
@@ -116,7 +116,11 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
                 }
 
                 final channelName = '${pr.className}#${method.name.toString()}';
-                if (!method.body.toSource().contains(channelName)) {
+                // analyzer 12+ 的 toSource() 不再包含注释，通道名通常写在注释里，
+                // 因此用源码切片（保留注释）来判断。
+                final bodySource =
+                    sourceCode.substring(method.body.offset, method.body.end);
+                if (!bodySource.contains(channelName)) {
                   log.severe('''
                   please fix this error: This method not contains channel name "$channelName", method:
                   ============>
