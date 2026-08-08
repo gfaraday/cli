@@ -87,13 +87,11 @@ class GenerateCommand extends FaradayCommand {
     final dartRoute = config['dart-route'].string;
 
     return <String, String>{
-      if (iosCommon != null) 'ios-common': iosCommon,
-      if (iosRoute != null) 'ios-route': iosRoute,
-      if (androidCommon != null) 'android-common': androidCommon,
-      if (androidRoute != null) 'android-route': androidRoute,
-      if (dartRoute != null) 'dart-route': dartRoute,
-      if (dartRoute == null)
-        'dart-route': path.join(root, 'lib/src/routes.dart')
+      'ios-common': ?iosCommon,
+      'ios-route': ?iosRoute,
+      'android-common': ?androidCommon,
+      'android-route': ?androidRoute,
+      'dart-route': dartRoute ?? path.join(root, 'lib/src/routes.dart')
     };
   }
 }

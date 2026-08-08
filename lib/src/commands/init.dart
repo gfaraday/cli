@@ -64,10 +64,10 @@ class InitCommand extends FaradayCommand {
     final androidRoute = config['android-route'].string;
 
     final outputs = <String, String>{
-      if (iosCommon != null) iosCommon: t.s_common,
-      if (iosRoute != null) iosRoute: t.s_route,
-      if (androidCommon != null) androidCommon: t.k_common,
-      if (androidRoute != null) androidRoute: t.k_route,
+      ?iosCommon: t.s_common,
+      ?iosRoute: t.s_route,
+      ?androidCommon: t.k_common,
+      ?androidRoute: t.k_route,
     };
 
     if (outputs.isNotEmpty) {
