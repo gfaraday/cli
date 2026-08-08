@@ -1,3 +1,6 @@
+# 3.1.1
+* feat: sort generated routes and common methods alphabetically — class-level blocks (route/sealed/enum/protocol/impl) are ordered by class name, and common methods within a class are ordered by method name, so generated output is stable regardless of file processing order
+
 # 3.1.0
 * upgrade dependencies (analyzer 6→12, lints 2→6, etc.)
 * adapt analyzer 12 API changes (`ClassDeclaration.name` → `namePart.typeName`, `members` → `body.members`)
