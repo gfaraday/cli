@@ -1,3 +1,4 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:faraday/src/utils/log.dart';
 import 'package:faraday/src/utils/version.g.dart';
 import 'package:logging/logging.dart';
@@ -15,8 +16,10 @@ void main(List<String> arguments) {
   final verbose = arguments.contains('--verbose');
 
   // append logger
+  // 强制启用 ANSI 颜色：VSCode 调试控制台等非 TTY 环境下默认会被禁用
+  ansiColorDisabled = false;
   Logger.root.onRecord.listen(recordAnsiLog);
-  Logger.root.level = verbose ? Level.ALL : Level.CONFIG;
+  Logger.root.level = verbose ? Level.ALL : Level.INFO;
 
   if (arguments.length == 1 &&
       versions.contains(arguments.first.toLowerCase())) {

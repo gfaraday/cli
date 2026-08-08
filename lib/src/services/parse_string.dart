@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/token.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 
 import '../../faraday.dart';
 import '../utils/exception.dart';
@@ -130,6 +131,7 @@ List<ParseResult> parse({required String sourceCode, int? offset}) {
                 } else {
                   // 如果这个method满足设定上述约定，那么认为他是一个`common`
                   commons.add(method);
+                  _checkInvokeMethodArguments(method, channelName);
                 }
                 if (offset != null) break;
               }
@@ -238,4 +240,63 @@ extension FaradayConstructorDeclaration on ConstructorDeclaration {
 
 extension Value on Token {
   String get name => lexeme;
+}
+
+/// 校验 invokeMethod 实际传参与方法签名参数是否一致，不一致时打印 warning：
+/// - map 传了、签名没声明 → 生成的原生代码不会接收该参数
+/// - 签名声明了、map 没传 → 原生端按签名生成，运行时取不到该参数
+void _checkInvokeMethodArguments(
+    MethodDeclaration method, String channelName) {
+  final visitor = _InvokeMethodVisitor(channelName);
+  method.body.accept(visitor);
+  final map = visitor.argumentsMap;
+  // 传参不是 map 字面量（如先赋值给变量再传入），无法静态校验，跳过
+  if (map == null) return;
+
+  final paramNames = method.parameters?.parameters
+          .map((p) => p.name?.lexeme)
+          .whereType<String>()
+          .toSet() ??
+      <String>{};
+
+  // 仅提取字符串字面量 key；if 条件项、...展开符等无法静态确定，跳过
+  final mapKeys = map.elements
+      .whereType<MapLiteralEntry>()
+      .map((e) => e.key)
+      .whereType<SimpleStringLiteral>()
+      .map((k) => k.value)
+      .toSet();
+
+  for (final key in mapKeys.difference(paramNames)) {
+    log.warning('$channelName: invokeMethod 传了 "$key"，但方法签名未声明该参数，'
+        '生成的原生代码不会接收它，请移除该传参或将其加入方法签名。');
+  }
+  for (final name in paramNames.difference(mapKeys)) {
+    log.warning('$channelName: 方法参数 "$name" 未在 invokeMethod 中传递，'
+        '原生端会按签名生成并等待该参数，运行时将取不到值，请在 invokeMethod 中补充。');
+  }
+}
+
+/// 在方法体中定位 `invokeMethod('xxx#yyy', {...})` 调用，取出第二个参数的 map 字面量
+class _InvokeMethodVisitor extends RecursiveAstVisitor<void> {
+  _InvokeMethodVisitor(this.channelName);
+
+  final String channelName;
+
+  SetOrMapLiteral? argumentsMap;
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    final args = node.argumentList.arguments;
+    if (node.methodName.name == 'invokeMethod' && args.length >= 2) {
+      final channel = args.first;
+      if (channel is SimpleStringLiteral && channel.value == channelName) {
+        final arguments = args[1];
+        if (arguments is SetOrMapLiteral) {
+          argumentsMap = arguments;
+        }
+      }
+    }
+    super.visitMethodInvocation(node);
+  }
 }

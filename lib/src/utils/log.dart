@@ -4,8 +4,14 @@ import 'package:logging/logging.dart';
 final finePen = AnsiPen()..xterm(15);
 final configPen = AnsiPen()..xterm(212);
 final infoPen = AnsiPen()..xterm(10);
-final warningPen = AnsiPen()..xterm(11);
-final severePen = AnsiPen()..xterm(1);
+// 黑字 + 亮黄底，在大量输出中更醒目
+final warningPen = AnsiPen()
+  ..black(bold: true)
+  ..xterm(11, bg: true);
+// 白字 + 红底，错误更醒目
+final severePen = AnsiPen()
+  ..white(bold: true)
+  ..red(bg: true);
 
 void recordAnsiLog(LogRecord record) {
   // record.level).call('${record.time} ${record.loggerName}-${record.level.name}:
