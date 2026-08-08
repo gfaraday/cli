@@ -90,8 +90,10 @@ void process(String sourceCode, String projectRoot, String identifier,
 
   // 处理 swift & kotlin
   for (final pr in prs) {
-    final commons =
-        pr.commons?.map((e) => JSON(e.info)).toList(growable: false) ?? [];
+    final commons = pr.commons?.map((e) => JSON(e.info)).toList() ?? <JSON>[];
+    // 类内 common 方法按名称字母序排序，保证生成结果稳定
+    commons.sort(
+        (a, b) => a['name'].stringValue.compareTo(b['name'].stringValue));
     final routes = <JSON>[];
     if (pr.entry != null && pr.needGenerateNativeRoute) {
       final info = JSON(pr.entry!.info);
@@ -112,7 +114,8 @@ void flush(
 
   final lines = LineSplitter.split(file.readAsStringSync()).toList();
 
-  final beginToken = '$indentation// ---> $prefix $token';
+  final marker = '$indentation// ---> $prefix';
+  final beginToken = '$marker $token';
   final endToken = '$indentation// <--- $prefix $token';
 
   final begin = lines.indexWhere((l) => l.endsWith(beginToken));
@@ -122,13 +125,31 @@ void flush(
   }
 
   if (contents.isNotEmpty) {
-    final insert = lines.indexWhere((l) => l.endsWith(prefix));
+    final insert = lines.indexWhere((l) => l.endsWith(marker));
     if (insert == -1) {
       throwToolExit('insert point not found [$prefix]');
     }
     contents.insert(0, beginToken);
     contents.add(endToken);
-    lines.insertAll(insert + 1, contents);
+
+    // 同级代码块按 token（类名）字母序插入，保证多次生成结果稳定有序
+    final siblingBegin = '$marker ';
+    final siblingEnd = '$indentation// <--- $prefix ';
+    var insertAt = -1;
+    var lastSiblingEnd = insert;
+    for (var i = insert + 1; i < lines.length; i++) {
+      final line = lines[i];
+      if (line.startsWith(siblingBegin)) {
+        final existing = line.substring(siblingBegin.length).trim();
+        if (existing.compareTo(token) > 0) {
+          insertAt = i;
+          break;
+        }
+      } else if (line.startsWith(siblingEnd)) {
+        lastSiblingEnd = i;
+      }
+    }
+    lines.insertAll(insertAt != -1 ? insertAt : lastSiblingEnd + 1, contents);
   }
 
   file.writeAsStringSync(lines.join('\n'));
