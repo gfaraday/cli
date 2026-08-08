@@ -58,10 +58,14 @@ jobs:
         with:
           path: lib/src/utils/version.g.dart
           contents: String version = "${{ needs.check_version.outputs.git_tag_name }}";
-      - name: Publish Dart/Flutter package
-        uses: sakebook/actions-flutter-pub-publisher@v1.3.1
-        with:
-            credential: ${{ secrets.PUB_PUBLISHER_CREDENTIAL_JSON }}
-            flutter_package: false
-            skip_test: true
-            dry_run: false
+      # sakebook/actions-flutter-pub-publisher 已无人维护，其依赖的裸 `pub`
+      # 命令在 Dart 3 中已移除，这里改用官方 setup-dart 手动发布
+      - uses: dart-lang/setup-dart@v1
+      - name: Write pub credentials
+        run: |
+          mkdir -p "$HOME/.config/dart"
+          echo '${{ secrets.PUB_PUBLISHER_CREDENTIAL_JSON }}' > "$HOME/.config/dart/pub-credentials.json"
+      - name: Publish to pub.dev
+        run: |
+          dart pub get
+          dart pub publish --force
