@@ -1,3 +1,9 @@
+# 3.1.2
+* feat: warn when `invokeMethod` arguments mismatch the Dart method signature — map keys not declared as parameters (won't be received by generated native code) and declared parameters not passed to `invokeMethod` (native side will fail at runtime) are both reported during generation
+* make WARNING/SEVERE logs stand out with bright background colors
+* fix: force-enable ANSI colors so colored logs also show in non-TTY output (e.g. VSCode debug console)
+* default log level is now INFO; pass `--verbose` for full output
+
 # 3.1.1
 * feat: sort generated routes and common methods alphabetically — class-level blocks (route/sealed/enum/protocol/impl) are ordered by class name, and common methods within a class are ordered by method name, so generated output is stable regardless of file processing order
 
